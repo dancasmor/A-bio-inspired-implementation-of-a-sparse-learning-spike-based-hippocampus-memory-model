@@ -49,7 +49,7 @@ A fully functional hippocampal bio-inspired memory model implemented on the <a h
 		<li><strong>numpy</strong> 1.21.4</li>
 		<li><strong>matplotlib</strong> 3.5.0</li>
 		<li><strong>xlsxWriter</strong> 3.0.2</li>
-		<li><strong>sPyBlocks</strong> (pending)</li>
+		<li><strong>sPyBlocks</strong>: version (pending)</li>
 	</ul>
 </ol>
 </p>
