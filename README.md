@@ -1,9 +1,18 @@
 # A bio-inspired implementation of a sparse-learning spike-based hippocampus memory model
 
+<h2 name="Description">Description</h2>
+<p align="justify">
+Code on which the paper entitled "A bio-inspired implementation of a sparse-learning spike-based hippocampus memory model" is based, sent to a journal and awaiting review.
+</p>
+<p align="justify">
+A fully functional hippocampal bio-inspired memory model implemented on the <a href="https://apt.cs.manchester.ac.uk/projects/SpiNNaker/">SpiNNaker</a> hardware platform using the technology of the Spiking Neuronal Network (SNN) is presented. The code is written in Python and makes use of the PyNN library and their adaptation for SpiNNaker called <a href="https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjaxOCWhrn3AhVL1BoKHVtQDvsQFnoECAkQAQ&url=https%3A%2F%2Fgithub.com%2FSpiNNakerManchester%2FsPyNNaker&usg=AOvVaw3e3TBMJ-08yBqtsKza_RiE">sPyNNaker</a>. In addition, the necessary scripts to replicate the tests and plots carried out in the paper are included, together with data and plots of the first tests.
+</p>
+
 <h2>Table of contents</h2>
 <p align="justify">
 <ul>
 <li><a href="#Description">Description</a></li>
+<li><a href="#Article">Article</a></li>
 <li><a href="#Instalation">Instalation</a></li>
 <li><a href="#Usage">Usage</a></li>
 <li><a href="#RepositoryContent">Repository content</a></li>
@@ -14,15 +23,7 @@
 </p>
 
 
-<h2 name="Description">Description</h2>
-<p align="justify">
-Code on which the paper entitled "A bio-inspired implementation of a sparse-learning spike-based hippocampus memory model" is based, sent to a journal and awaiting review.
-</p>
-<p align="justify">
-A fully functional hippocampal bio-inspired memory model implemented on the <a href="https://apt.cs.manchester.ac.uk/projects/SpiNNaker/">SpiNNaker</a> hardware platform using the technology of the Spiking Neuronal Network (SNN) is presented. The code is written in Python and makes use of the PyNN library and their adaptation for SpiNNaker called <a href="https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjaxOCWhrn3AhVL1BoKHVtQDvsQFnoECAkQAQ&url=https%3A%2F%2Fgithub.com%2FSpiNNakerManchester%2FsPyNNaker&usg=AOvVaw3e3TBMJ-08yBqtsKza_RiE">sPyNNaker</a>. In addition, the necessary scripts to replicate the tests and plots carried out in the paper are included.
-</p>
-
-<h3>Article</h3>
+<h2 name="Article">Article</h2>
 <p align="justify">
 <strong>Title</strong>: A bio-inspired implementation of a sparse-learning spike-based hippocampus memory model
 
@@ -47,6 +48,8 @@ A fully functional hippocampal bio-inspired memory model implemented on the <a h
 		<li><strong>neural blocks</strong> last repository version (link to be uploaded)</li>
 		<li><strong>numpy</strong> 1.21.4</li>
 		<li><strong>matplotlib</strong> 3.5.0</li>
+		<li><strong>xlsxWriter</strong> 3.0.2</li>
+		<li><strong>sPyBlocks</strong> (pending)</li>
 	</ul>
 </ol>
 </p>
@@ -92,7 +95,7 @@ The author of the original idea is Daniel Casanueva-Morato while working on a re
 
 This research was partially supported by the Spanish grant MINDROB (PID2019-105556GB-C33/AEI/10.13039/501100011033). 
 
-D. C.-M. was supported by a "Formación de Personal Universitario" Scholarship from the Spanish Ministry of Education, Culture and Sport.
+D. C.-M. was supported by a "Formación de Profesor Universitario" Scholarship from the Spanish Ministry of Education, Culture and Sport.
 </p>
 
 
