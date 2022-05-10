@@ -67,17 +67,17 @@ python script.py
 <h2 name="RepositoryContent">Repository content</h3>
 <p align="justify">
 <ul>
-	<li><a href="DG_CA3_CA1_one_hot.py">DG_CA3_CA1_one_hot.py</a>: script responsible for building and simulating the oscillating memory model, as well as storing the simulation data in a file in the <a href="data/">data</a> folder, according to the configuration specified in the selected <a href="config_files/">config_files</a> folder.</li>
-	<li><a href="test_DG_CA3_CA1_one_hot.py">test_DG_CA3_CA1_one_hot.py</a>: script in charge of carrying out the simulation of the memory model and the plotting of the necessary graphics of the simulation. The conditions of the simulation are as indicated in the configuration specified in the selected <a href="config_files/">config_files</a> folder and the generated graphics are stored in <a href="plot/">plot</a>.</li>
-	<li><a href="memory_testbench.py">memory_testbench.py</a>: script in charge of generating the file with the input spikes of the memory model (in <a href="tb/">tb</a> folder) needed to perform the different tests.</li>
-	<li><a href="tools.py">tools.py</a>,<a href="plot.py">plot.py</a> and <a href="excel_controller.py">excel_controller.py</a>: set of functions used as a tool for data processing, graphical representation of the data and generation of excel files summarising the result of the experimentation respectively.</li>
-	<li><a href="data/">data</a> and <a href="plot/">plot</a>: folders where the data files from the network simulation are stored and where the plots of these data are stored respectively.</li>
-	<li><a href="config_files/">config_files</a> folder: contains different folders, one for each desired configuration of the memory model. The <a href="config_files/configFileParameters.ini">configFileParameters.ini</a> file indicates which of all the configurations are to be used. Within each configuration there are 4 files:</li>
+	<li><p align="justify"><a href="DG_CA3_CA1_one_hot.py">DG_CA3_CA1_one_hot.py</a>: script responsible for building and simulating the oscillating memory model, as well as storing the simulation data in a file in the <a href="data/">data</a> folder, according to the configuration specified in the selected <a href="config_files/">config_files</a> folder.</p></li>
+	<li><p align="justify"><a href="test_DG_CA3_CA1_one_hot.py">test_DG_CA3_CA1_one_hot.py</a>: script in charge of carrying out the simulation of the memory model and the plotting of the necessary graphics of the simulation. The conditions of the simulation are as indicated in the configuration specified in the selected <a href="config_files/">config_files</a> folder and the generated graphics are stored in <a href="plot/">plot</a>.</p></li>
+	<li><p align="justify"><a href="memory_testbench.py">memory_testbench.py</a>: script in charge of generating the file with the input spikes of the memory model (in <a href="tb/">tb</a> folder) needed to perform the different tests.</p></li>
+	<li><p align="justify"><a href="tools.py">tools.py</a>,<a href="plot.py">plot.py</a> and <a href="excel_controller.py">excel_controller.py</a>: set of functions used as a tool for data processing, graphical representation of the data and generation of excel files summarising the result of the experimentation respectively.</p></li>
+	<li><p align="justify"><a href="data/">data</a> and <a href="plot/">plot</a>: folders where the data files from the network simulation are stored and where the plots of these data are stored respectively.</p></li>
+	<li><p align="justify"><a href="config_files/">config_files</a> folder: contains different folders, one for each desired configuration of the memory model. The <a href="config_files/configFileParameters.ini">configFileParameters.ini</a> file indicates which of all the configurations are to be used. Within each configuration there are 4 files:</p></li>
 		<ul>
-			<li><a href="config_files/test_01/input_spikes.ini">input_spikes.ini</a>: input spikes to the memory model.</li>
-			<li><a href="config_files/test_01/memory_config.ini">memory_config.ini</a>: parameters shaping the memory model.</li>
-			<li><a href="config_files/test_01/network_config.json">network_config.json</a>: construction parameters of the neuron and synapse models of the network (it is advisable not to modify them).</li>
-			<li><a href="config_files/test_01/simulation_config.ini">simulation_config.ini</a>: all parameters related to the simulation and graphical representation of the results.</li>
+			<li><p align="justify"><a href="config_files/test_01/input_spikes.ini">input_spikes.ini</a>: input spikes to the memory model.</p></li>
+			<li><p align="justify"><a href="config_files/test_01/memory_config.ini">memory_config.ini</a>: parameters shaping the memory model.</p></li>
+			<li><p align="justify"><a href="config_files/test_01/network_config.json">network_config.json</a>: construction parameters of the neuron and synapse models of the network (it is advisable not to modify them).</p></li>
+			<li><p align="justify"><a href="config_files/test_01/simulation_config.ini">simulation_config.ini</a>: all parameters related to the simulation and graphical representation of the results.</p></li>
 		</ul>
 </ul>
 </p>
@@ -88,7 +88,7 @@ python script.py
 To perform memory tests, run <a href="test_DG_CA3_CA1_one_hot.py">test_DG_CA3_CA1_one_hot.py</a>. This script is in charge of building the memory model, i.e. calling <a href="DG_CA3_CA1_one_hot.py">DG_CA3_CA1_one_hot.py</a>, run the simulation and create the necessary visual resources on the simulation result.
 </p>
 <p align="justify">
-In order to define the parameters of the memory model to be built and the conditions of the simulation to be run, it is necessary to create or modify a set of configuration files located in the folder <a href="config_files/">config_files</a>. You can have as many configurations of models and simulations as you want, each one must be contained in a different folder, and is the file <a href="config_files/configFileParameters.ini">configFileParameters.ini</a> in which you indicate which of all the configurations you want to use. The configuration must consist of 4 files, the contents of which are specified in section <a href="#RepositoryContent">Repository content</a>.
+In order to define the parameters of the memory model to be built and the conditions of the simulation to be run, it is necessary to create or modify a set of configuration files located in the folder <a href="config_files/">config_files</a>. You can have as many configurations of models and simulations as you want, each one must be contained in a different folder, and is the file <a href="config_files/configFileParameters.ini">configFileParameters.ini</a> in which you indicate which of all the configurations you want to use. The configuration must consist of 4 files, the contents of which are specified in <a href="#RepositoryContent">Repository content</a> section.
 </p>
 <p align="justify">
 In case you want to try some of the tests discussed in the paper such as the stress test or the random access test, you can use <a href="memory_testbench.py">memory_testbench.py</a>. It generates the input_spikes.ini necessary to carry out the test, as well as indicating the simulation time required and the number of operations performed.
