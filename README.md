@@ -56,13 +56,19 @@ Please go to section <a href="#CiteThisWork">cite this work</a> to learn how to 
 	</ul>
 </ol>
 </p>
+<p align="justify">
+To run any script, follow the python nomenclature: 
+<code>
+python script.py
+</code>
+</p>
 
 
 <h2 name="RepositoryContent">Repository content</h3>
 <p align="justify">
 <ul>
 	<li><a href="DG_CA3_CA1_one_hot.py">DG_CA3_CA1_one_hot.py</a>: script responsible for building and simulating the oscillating memory model, as well as storing the simulation data in a file in the <a href="data/">data</a> folder, according to the configuration specified in the selected <a href="config_files/">config_files</a> folder.</li>
-	<li><a href="test_DG_CA3_CA1_one_hot.py">test_DG_CA3_CA1_one_hot.py</a>: script in charge of carrying out the simulation of the memory model and the plotting of the necessary graphics of the simulation. The conditions of the simulation are as indicated in the configuration specified in the selected <a href="config_files/">config_files</a> folder.</li>
+	<li><a href="test_DG_CA3_CA1_one_hot.py">test_DG_CA3_CA1_one_hot.py</a>: script in charge of carrying out the simulation of the memory model and the plotting of the necessary graphics of the simulation. The conditions of the simulation are as indicated in the configuration specified in the selected <a href="config_files/">config_files</a> folder and the generated graphics are stored in <a href="plot/">plot</a>.</li>
 	<li><a href="memory_testbench.py">memory_testbench.py</a>: script in charge of generating the file with the input spikes of the memory model (in <a href="tb/">tb</a> folder) needed to perform the different tests.</li>
 	<li><a href="tools.py">tools.py</a>,<a href="plot.py">plot.py</a> and <a href="excel_controller.py">excel_controller.py</a>: set of functions used as a tool for data processing, graphical representation of the data and generation of excel files summarising the result of the experimentation respectively.</li>
 	<li><a href="data/">data</a> and <a href="plot/">plot</a>: folders where the data files from the network simulation are stored and where the plots of these data are stored respectively.</li>
@@ -79,10 +85,16 @@ Please go to section <a href="#CiteThisWork">cite this work</a> to learn how to 
 
 <h2 name="Usage">Usage</h2>
 <p align="justify">
-Still under construction.
+To perform memory tests, run <a href="test_DG_CA3_CA1_one_hot.py">test_DG_CA3_CA1_one_hot.py</a>. This script is in charge of building the memory model, i.e. calling <a href="DG_CA3_CA1_one_hot.py">DG_CA3_CA1_one_hot.py</a>, run the simulation and create the necessary visual resources on the simulation result.
 </p>
 <p align="justify">
-
+In order to define the parameters of the memory model to be built and the conditions of the simulation to be run, it is necessary to create or modify a set of configuration files located in the folder <a href="config_files/">config_files</a>. You can have as many configurations of models and simulations as you want, each one must be contained in a different folder, and is the file <a href="config_files/configFileParameters.ini">configFileParameters.ini</a> in which you indicate which of all the configurations you want to use. The configuration must consist of 4 files, the contents of which are specified in section <a href="#RepositoryContent">Repository content</a>.
+</p>
+<p align="justify">
+In case you want to try some of the tests discussed in the paper such as the stress test or the random access test, you can use <a href="memory_testbench.py">memory_testbench.py</a>. It generates the input_spikes.ini necessary to carry out the test, as well as indicating the simulation time required and the number of operations performed.
+</p>
+<p align="justify">
+Finally, in order to be able to use the memory model as a module within an SNN network, we are working on the development of a Python library to facilitate this process, while it is possible to take it from <a href="DG_CA3_CA1_one_hot.py">DG_CA3_CA1_one_hot.py</a> and manage memory input and output connections.
 </p>
 
 
