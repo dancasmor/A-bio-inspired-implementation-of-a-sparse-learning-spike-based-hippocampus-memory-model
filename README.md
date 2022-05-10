@@ -7,6 +7,10 @@ Code on which the paper entitled "A bio-inspired implementation of a sparse-lear
 <p align="justify">
 A fully functional hippocampal bio-inspired memory model implemented on the <a href="https://apt.cs.manchester.ac.uk/projects/SpiNNaker/">SpiNNaker</a> hardware platform using the technology of the Spiking Neuronal Network (SNN) is presented. The code is written in Python and makes use of the PyNN library and their adaptation for SpiNNaker called <a href="https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjaxOCWhrn3AhVL1BoKHVtQDvsQFnoECAkQAQ&url=https%3A%2F%2Fgithub.com%2FSpiNNakerManchester%2FsPyNNaker&usg=AOvVaw3e3TBMJ-08yBqtsKza_RiE">sPyNNaker</a>. In addition, the necessary scripts to replicate the tests and plots carried out in the paper are included, together with data and plots of the first tests.
 </p>
+<p align="justify">
+Please go to section <a href="#CiteThisWork">cite this work</a> to learn how to properly reference the works cited here.
+</p>
+
 
 <h2>Table of contents</h2>
 <p align="justify">
@@ -29,7 +33,7 @@ A fully functional hippocampal bio-inspired memory model implemented on the <a h
 
 <strong>Abstract</strong>: 
 
-<strong>Keywords</strong>: 
+<strong>Keywords</strong>: Hippocampus model, spiking neural networks, Neuromorphic engineering, CA3, DG, CA1, SpiNNaker, spike-based memory
 
 <strong>Author</strong>: Daniel Casanueva-Morato
 
@@ -45,11 +49,10 @@ A fully functional hippocampal bio-inspired memory model implemented on the <a h
 	<li>Python libraries:</li>
 	<ul>
 		<li><strong>sPyNNaker8</strong>: last stable version <a href="http://spinnakermanchester.github.io/development/gitinstall.html">compiled from source</a></li>
-		<li><strong>neural blocks</strong> last repository version (link to be uploaded)</li>
 		<li><strong>numpy</strong> 1.21.4</li>
 		<li><strong>matplotlib</strong> 3.5.0</li>
 		<li><strong>xlsxWriter</strong> 3.0.2</li>
-		<li><strong>sPyBlocks</strong>: version (pending)</li>
+		<li><strong>sPyBlocks</strong>: (pending)</li>
 	</ul>
 </ol>
 </p>
