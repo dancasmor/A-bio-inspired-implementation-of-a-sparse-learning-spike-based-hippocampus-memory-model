@@ -103,7 +103,7 @@ def main(weight):
     ######################################
     # Simulation parameters
     ######################################
-    # El paso de tiempo de cada iteración en ms
+    # Setup simulation
     sim.setup(timestep=simulationParameters["timeStep"])
 
     ######################################
