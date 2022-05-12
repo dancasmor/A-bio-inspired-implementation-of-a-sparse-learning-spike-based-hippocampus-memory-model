@@ -244,7 +244,7 @@ def main(weight):
     formatVCA3mem = tools.format_neo_data("v", vCA3mem)
     formatSpikesCA3mem = tools.format_neo_data("spikes", spikesCA3mem)
     if weight:
-        formatWeightPCcueL_PCmemL = tools.format_neo_data("weights", w_CA3cueL_CA3memL,
+        formatWeightCA3cueL_CA3memL = tools.format_neo_data("weights", w_CA3cueL_CA3memL,
                                                            {"simTime": simulationParameters["simTime"],
                                                             "timeStep": simulationParameters["timeStep"]})
     formatSpikeDG = tools.format_neo_data("spikes", spikesDG)
