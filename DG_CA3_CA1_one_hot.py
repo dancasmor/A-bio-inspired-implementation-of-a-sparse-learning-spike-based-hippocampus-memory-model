@@ -3,14 +3,13 @@ import configparser
 import math
 import numpy as np
 import spynnaker8 as sim
-from sPyBlocks.connection_functions import truth_table_column
 from sPyBlocks.constant_spike_source import ConstantSpikeSource
 from sPyBlocks.neural_decoder import NeuralDecoder
 from sPyBlocks.neural_encoder import NeuralEncoder
 import tools
 
 """
-DG-CA3-CA1 one-hot network
+DG-CA3-CA1 one-hot memory
 
 + Population:
     + Input: pattern input
