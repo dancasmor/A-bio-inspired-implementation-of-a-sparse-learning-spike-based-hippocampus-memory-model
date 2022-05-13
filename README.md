@@ -52,7 +52,7 @@ Please go to section <a href="#CiteThisWork">cite this work</a> to learn how to 
 		<li><strong>numpy</strong> 1.21.4</li>
 		<li><strong>matplotlib</strong> 3.5.0</li>
 		<li><strong>xlsxWriter</strong> 3.0.2</li>
-		<li><strong>sPyBlocks</strong>: (pending)</li>
+		<li><strong>sPyBlocks</strong>: 1.1.0</li>
 	</ul>
 </ol>
 </p>
