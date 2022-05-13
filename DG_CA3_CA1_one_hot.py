@@ -164,7 +164,7 @@ def main(weight):
     if len(input_indexes) != len(channel_indexes):
         raise ValueError("There is not the same number of elements in input_indexes and channel_indexes")
     for i in range(pop_len):
-        i_bin = format(channel_indexes[i], "0" + str(CA1Layer.n_inputs) + 'b')
+        i_bin = format(channel_indexes[i], "0" + str(CA1Layer.n_outputs) + 'b')
         i_bin_splitted = [j for j in reversed(i_bin)]
         connections = [k for k in range(0, len(i_bin_splitted)) if i_bin_splitted[k] == '1']
         CA1Layer.connect_inputs(CA3cueLayer, ini_pop_indexes=[input_indexes[i]], or_indexes=connections)
