@@ -1,20 +1,13 @@
 
-import spynnaker8 as sim
-import tools
+import configparser
 import math
 import numpy as np
-import configparser
-import os
-import sys
-import inspect
-parent_dir_path = os.path.dirname(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))))
-neural_decoder_path = os.path.join(parent_dir_path, "neural_blocks")
-sys.path.insert(0, neural_decoder_path)
-from neural_decoder import NeuralDecoder
-from neural_encoder import NeuralEncoder
-from constant_spike_source import ConstantSpikeSource
-from connection_functions import truth_table_column
-
+import spynnaker8 as sim
+from sPyBlocks.connection_functions import truth_table_column
+from sPyBlocks.constant_spike_source import ConstantSpikeSource
+from sPyBlocks.neural_decoder import NeuralDecoder
+from sPyBlocks.neural_encoder import NeuralEncoder
+import tools
 
 """
 DG-CA3-CA1 one-hot network
@@ -145,7 +138,7 @@ def main(weight):
     DGLayer.connect_outputs(CA3cueLayer, end_pop_indexes=[[i] for i in range(cueSize)], and_indexes=range(1, cueSize+1),
                             conn=sim.StaticSynapse(weight=synParameters["DGL-CA3cueL"]["initWeight"],
                                                    delay=synParameters["DGL-CA3cueL"]["delay"]))
-    DGLayer.connect_constant_spikes([constant_spike_source.set_source, constant_spike_source.flip_flop.output_neuron])
+    DGLayer.connect_constant_spikes([constant_spike_source.set_source, constant_spike_source.latch.output_neuron])
 
     # IL-CA3mem -> 1 to 1, excitatory and static (last m neurons of DG: only the number of directions to use)
     IL_CA3memL_conn = sim.Projection(sim.PopulationView(ILayer, range(dgInputSize, ilInputSize, 1)), CA3memLayer, sim.OneToOneConnector(),
@@ -166,11 +159,17 @@ def main(weight):
     CA3cueL_CA3memL_conn = sim.Projection(CA3cueLayer, CA3memLayer, sim.AllToAllConnector(allow_self_connections=True), synapse_type=stdp_model)
 
     # CA3cue-CA1 -> 1 to 1 excitatory and static
-    input_indexes = range(cueSize)
-    or_indexes = range(CA1Layer.n_outputs)
-    for i in or_indexes:
-        selected_inputs = list(set(np.array(truth_table_column(CA1Layer.n_inputs, i, select=1)) - 1).intersection(input_indexes))
-        CA1Layer.connect_inputs(CA3cueLayer, ini_pop_indexes=selected_inputs, or_indexes=[i])
+    pop_len = len(CA3cueLayer)
+    input_indexes = range(pop_len)
+    channel_indexes = range(1, CA3cueLayer.size + 1)
+    if len(input_indexes) != len(channel_indexes):
+        raise ValueError("There is not the same number of elements in input_indexes and channel_indexes")
+    for i in range(pop_len):
+        i_bin = format(channel_indexes[i], "0" + str(CA1Layer.n_inputs) + 'b')
+        i_bin_splitted = [j for j in reversed(i_bin)]
+        connections = [k for k in range(0, len(i_bin_splitted)) if i_bin_splitted[k] == '1']
+        CA1Layer.connect_inputs(CA3cueLayer, ini_pop_indexes=[input_indexes[i]], or_indexes=connections)
+    
     # CA1-Output -> 1 to 1 excitatory and static
     CA1Layer.connect_outputs(sim.PopulationView(OLayer, range(dgInputSize)), end_pop_indexes=[[i] for i in range(dgInputSize)],
                              conn=sim.StaticSynapse(weight=synParameters["CA1L-OL"]["initWeight"],
