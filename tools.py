@@ -180,7 +180,7 @@ def format_weight_stream(weightsStream, timeStreamParam):
     return {"srcNeuronId": srcNeuronId, "dstNeuronId": dstNeuronId, "w": w, "timeStamp": timeStampStream}
 
 
-def get_spikes_per_timestamp(spikesInfo, timeStream, numCueBinaryNeuron, numMemNeuron, endianness, isSave, fileSavePath="", fileSaveName=""):
+def get_spikes_per_timestamp(spikesInfo, timeStream, numCueBinaryNeuron, numContNeuron, endianness, isSave, fileSavePath="", fileSaveName=""):
     """
     Order distint streams of spikes by the time stamp when it were fired
 
@@ -188,7 +188,7 @@ def get_spikes_per_timestamp(spikesInfo, timeStream, numCueBinaryNeuron, numMemN
         {"population_i":{"spikeStream":spikeStream, "label":label, "sublabels": sublabel}:, ...}
     @param timeStream: time stamp stream
     @param numCueBinaryNeuron: number of neurons used to address in the input array
-    @param numMemNeuron: number of neurons used to store memories
+    @param numContNeuron: number of neurons used to store content of memories
     @param endianness: type of codification of the information stored in memory: "little endian" or "big_endian"
     @param isSave: bool, if save the information in a txt file
     @param fileSavePath: (optional) path where to store the txt file
@@ -201,9 +201,9 @@ def get_spikes_per_timestamp(spikesInfo, timeStream, numCueBinaryNeuron, numMemN
 
     # Crete a list or reorder indeces for the spikes of INPUT neurons to support endianness codifications
     if endianness == "little_endian":
-        indexInputSpike = np.flip(range(numCueBinaryNeuron)).tolist() + list(range(numMemNeuron))
+        indexInputSpike = np.flip(range(numCueBinaryNeuron)).tolist() + list(range(numContNeuron))
     elif endianness == "big_endian":
-        indexInputSpike = list(range(numCueBinaryNeuron)) + list(range(numMemNeuron))
+        indexInputSpike = list(range(numCueBinaryNeuron)) + list(range(numContNeuron))
     else:
         raise ValueError("Endianness code not supported. Supported: little_endian and big_endian")
 
@@ -224,7 +224,7 @@ def get_spikes_per_timestamp(spikesInfo, timeStream, numCueBinaryNeuron, numMemN
                 # Only if the current neuron has fired in the current time stamp, it is added
                 if stamp in spikeStream:
                     if label == "IN" or label == "OUT" or label == "CA1":
-                        # Special case for IN and OUT population: separate IN/OUT cue (True) and IN/OUT mem (False)
+                        # Special case for IN and OUT population: separate IN/OUT cue (True) and IN/OUT cont (False)
                         if indexNeuron < numCueBinaryNeuron:
                             spikesCurrTimeStampPopulation_i.append(indexInputSpike[indexNeuron])
                         else:
@@ -254,7 +254,7 @@ def get_spikes_per_timestamp(spikesInfo, timeStream, numCueBinaryNeuron, numMemN
     return spikesOrderedByTimeStamp
 
 
-def get_format_spike_info(spikesInfo, timeStream, numCueBinaryNeuron, numMemOneHotNeuron, numMemNeuron,
+def get_format_spike_info(spikesInfo, timeStream, numCueBinaryNeuron, numContOneHotNeuron, numContNeuron,
                           endianness, iSMetaDataSave, isSave, allTimeStampInTrace, fileSavePath="", fileSaveName=""):
     """
     Format all the spikes information along the network to create a readable data structure where the spikes are
@@ -264,8 +264,8 @@ def get_format_spike_info(spikesInfo, timeStream, numCueBinaryNeuron, numMemOneH
         {"population_i":{"spikeStream":spikeStream, "label":label, "sublabels": sublabel}:, ...}
     @param timeStream: time stamp stream
     @param numCueBinaryNeuron: number of neurons used to address in the input array
-    @param numMemOneHotNeuron: number of neurons used to address in One-hot
-    @param numMemNeuron: number of neurons used to store memories
+    @param numContOneHotNeuron: number of neurons used to address in One-hot
+    @param numContNeuron: number of neurons used to store content of memories
     @param endianness: type of codification of the information stored in memory: "little endian" or "big_endian"
     @param iSMetaDataSave: bool, if save the middle information in a txt file (all spikes data ordered but not formatted)
     @param isSave: bool, if save the information in a txt file
@@ -278,7 +278,7 @@ def get_format_spike_info(spikesInfo, timeStream, numCueBinaryNeuron, numMemOneH
     spikesOrderedByTimeStampFormatted = {}
 
     # Get the spikes ordered by time stamp when they were fired
-    spikesOrderedByTimeStamp = get_spikes_per_timestamp(spikesInfo, timeStream, numCueBinaryNeuron, numMemNeuron, endianness,
+    spikesOrderedByTimeStamp = get_spikes_per_timestamp(spikesInfo, timeStream, numCueBinaryNeuron, numContNeuron, endianness,
                                                         iSMetaDataSave, fileSavePath=fileSavePath, fileSaveName=fileSaveName)
 
     # Crete a list or reorder indeces for the spikes of INPUT neurons to support endianness codifications
@@ -326,17 +326,17 @@ def get_format_spike_info(spikesInfo, timeStream, numCueBinaryNeuron, numMemOneH
     return spikesOrderedByTimeStampFormatted
 
 
-def get_string_format_spike_info_each_timestamp(spikes, numCueOneHotNeuron, numMemNeuron, operationCountBegin, operationCountEnd):
+def get_string_format_spike_info_each_timestamp(spikes, numCueOneHotNeuron, numContNeuron, operationCountBegin, operationCountEnd):
     """
     Given spike information of neurons at a specific time stamp, format it to a more friendly-redable format
 
     @param spikes: spikes information at a specific time stamp: {"population_i": spikesOfPopiInCurrStampFormatted, ...}
     @param numCueOneHotNeuron: number of neurons used to address in One-hot
-    @param numMemNeuron: number of neurons used to store memories
+    @param numContNeuron: number of neurons used to store content of memories
     @param operationCountBegin: index of the next operation to begin
     @param operationCountEnd: index of the next operation to end
     @return: a list with the spike stream formated for each population in the current time stamp
-                [inCue, inMemBin, dgOneHot, ca3Cue, ca3MemBin, ca1bin, outCue, outMem, operationName]
+                [inCue, inContBin, dgOneHot, ca3Cue, ca3ContBin, ca1bin, outCue, outCont, operationName]
     """
 
     # + Reformat spike information to string
@@ -346,18 +346,18 @@ def get_string_format_spike_info_each_timestamp(spikes, numCueOneHotNeuron, numM
     inCue = spikes["INcue"] if ("INcue" in spikes) and not (spikes["INcue"] == []) and (
             spikes["INcue"] is not False) else "-"
 
-    # INmem: represent the memories in binary and in neurons activated
-    if ("INmem" in spikes) and not (spikes["INmem"] == []) and (spikes["INmem"] is not False):
-        inMemBin = ""
-        for index in range(numMemNeuron):
-            if index in spikes["INmem"]:
-                inMemBin = "1" + inMemBin
+    # INcont: represent the content of memories in binary and in neurons activated
+    if ("INcont" in spikes) and not (spikes["INcont"] == []) and (spikes["INcont"] is not False):
+        inContBin = ""
+        for index in range(numContNeuron):
+            if index in spikes["INcont"]:
+                inContBin = "1" + inContBin
             else:
-                inMemBin = "0" + inMemBin
-        spikes["INmem"].reverse()
-        inMemBin = inMemBin + " " + str(spikes["INmem"])
+                inContBin = "0" + inContBin
+        spikes["INcont"].reverse()
+        inContBin = inContBin + " " + str(spikes["INcont"])
     else:
-        inMemBin = "-"
+        inContBin = "-"
 
     # DG: one-hot representation
     if ("DG" in spikes) and not (spikes["DG"] == []) and (spikes["DG"] is not False):
@@ -375,18 +375,18 @@ def get_string_format_spike_info_each_timestamp(spikes, numCueOneHotNeuron, numM
     ca3Cue = spikes["CA3cue"] if ("CA3cue" in spikes) and not (spikes["CA3cue"] == []) and (
             spikes["CA3cue"] is not False) else "-"
 
-    # CA3mem: represent the memories in binary and in neurons activated
-    if ("CA3mem" in spikes) and not (spikes["CA3mem"] == []) and (spikes["CA3mem"] is not False):
-        ca3MemBin = ""
-        for index in range(numMemNeuron):
-            if index in spikes["CA3mem"]:
-                ca3MemBin = "1" + ca3MemBin
+    # CA3cont: represent the content of memories in binary and in neurons activated
+    if ("CA3cont" in spikes) and not (spikes["CA3cont"] == []) and (spikes["CA3cont"] is not False):
+        ca3ContBin = ""
+        for index in range(numContNeuron):
+            if index in spikes["CA3cont"]:
+                ca3ContBin = "1" + ca3ContBin
             else:
-                ca3MemBin = "0" + ca3MemBin
-        spikes["CA3mem"].reverse()
-        ca3MemBin = ca3MemBin + " " + str(spikes["CA3mem"])
+                ca3ContBin = "0" + ca3ContBin
+        spikes["CA3cont"].reverse()
+        ca3ContBin = ca3ContBin + " " + str(spikes["CA3cont"])
     else:
-        ca3MemBin = "-"
+        ca3ContBin = "-"
 
     # CA1
     ca1bin = spikes["CA1"] if ("CA1" in spikes) and not (spikes["CA1"] == []) and (
@@ -396,34 +396,34 @@ def get_string_format_spike_info_each_timestamp(spikes, numCueOneHotNeuron, numM
     outCue = spikes["OUTcue"] if ("OUTcue" in spikes) and not (spikes["OUTcue"] == []) and (
             spikes["OUTcue"] is not False) else "-"
 
-    # OUTmem: represent the memories in binary and in neurons activated
-    if ("OUTmem" in spikes) and not (spikes["OUTmem"] == []) and (spikes["OUTmem"] is not False):
-        outMemBin = ""
-        for index in range(numMemNeuron):
-            if index in spikes["OUTmem"]:
-                outMemBin = "1" + outMemBin
+    # OUTcont: represent the content of memories in binary and in neurons activated
+    if ("OUTcont" in spikes) and not (spikes["OUTcont"] == []) and (spikes["OUTcont"] is not False):
+        outContBin = ""
+        for index in range(numContNeuron):
+            if index in spikes["OUTcont"]:
+                outContBin = "1" + outContBin
             else:
-                outMemBin = "0" + outMemBin
-        spikes["OUTmem"].reverse()
-        outMemBin = outMemBin + " " + str(spikes["OUTmem"])
+                outContBin = "0" + outContBin
+        spikes["OUTcont"].reverse()
+        outContBin = outContBin + " " + str(spikes["OUTcont"])
     else:
-        outMemBin = "-"
+        outContBin = "-"
 
-    # Check if a operation is begining: write = full input (cue and mem), read = cue input only
+    # Check if a operation is begining: write = full input (cue and cont), read = cue input only
     operationNameBegin = "-"
-    if not (inCue == "-") and not (inMemBin == "-"):
+    if not (inCue == "-") and not (inContBin == "-"):
         operationNameBegin = "Learn " + str(operationCountBegin)
     elif not (inCue == "-"):
         operationNameBegin = "Recall " + str(operationCountBegin)
 
-    # Check if a operation is ending: write = full output (cue and mem), read = cue output only
+    # Check if a operation is ending: write = full output (cue and cont), read = cue output only
     operationNameEnd = "-"
-    if not (outCue == "-") and not (outMemBin == "-"):
+    if not (outCue == "-") and not (outContBin == "-"):
         operationNameEnd = "Learn " + str(operationCountEnd)
-    elif not (outMemBin == "-"):
+    elif not (outContBin == "-"):
         operationNameEnd = "Recall " + str(operationCountEnd)
 
-    return [inCue, inMemBin, dgOneHot, ca3Cue, ca3MemBin, ca1bin, outCue, outMemBin, operationNameBegin, operationNameEnd]
+    return [inCue, inContBin, dgOneHot, ca3Cue, ca3ContBin, ca1bin, outCue, outContBin, operationNameBegin, operationNameEnd]
 
 
 #####################################

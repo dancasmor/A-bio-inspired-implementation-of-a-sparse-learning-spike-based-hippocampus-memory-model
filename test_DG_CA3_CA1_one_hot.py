@@ -45,22 +45,22 @@ def processing_data(spikeAmplitude, marginAddLim, fontsize, figSize, figSpikeTit
         return False
 
     # Search all variables which are going to be used to create the plots and representations
-    vCA3cue, spikesCA3cue, vCA3mem, spikesCA3mem, spikesDG, wCA3cue_CA3mem, spikesInput, spikesCA1, spikesOutput = {}, {}, {}, {}, {}, {}, {}, {}, {}
+    vCA3cue, spikesCA3cue, vCA3cont, spikesCA3cont, spikesDG, wCA3cue_CA3cont, spikesInput, spikesCA1, spikesOutput = {}, {}, {}, {}, {}, {}, {}, {}, {}
     for variable in data["variables"]:
         if variable["type"] == "v" and variable["popNameShort"] == "CA3cueL":
             vCA3cue = variable
         elif variable["type"] == "spikes" and variable["popNameShort"] == "CA3cueL":
             spikesCA3cue = variable
-        elif variable["type"] == "v" and variable["popNameShort"] == "CA3memL":
-            vCA3mem = variable
-        elif variable["type"] == "spikes" and variable["popNameShort"] == "CA3memL":
-            spikesCA3mem = variable
+        elif variable["type"] == "v" and variable["popNameShort"] == "CA3contL":
+            vCA3cont = variable
+        elif variable["type"] == "spikes" and variable["popNameShort"] == "CA3contL":
+            spikesCA3cont = variable
         elif variable["type"] == "spikes" and variable["popNameShort"] == "DGL":
             spikesDG = variable
         elif variable["type"] == "spikes" and variable["popNameShort"] == "IL":
             spikesInput = variable
-        elif variable["type"] == "w" and variable["popNameShort"] == "CA3cueL-CA3memL":
-            wCA3cue_CA3mem = variable
+        elif variable["type"] == "w" and variable["popNameShort"] == "CA3cueL-CA3contL":
+            wCA3cue_CA3cont = variable
         elif variable["type"] == "spikes" and variable["popNameShort"] == "CA1L":
             spikesCA1 = variable
         elif variable["type"] == "spikes" and variable["popNameShort"] == "OL":
@@ -68,23 +68,23 @@ def processing_data(spikeAmplitude, marginAddLim, fontsize, figSize, figSpikeTit
 
     # Create the stream of time stamp and format spikes information
     timeStream = tools.generate_time_streams(data["simTime"], data["timeStep"], "ms")
-    spikesInfo = {"IN":{"spikeStream":spikesInput["data"], "label":"IN", "sublabels":["INcue", "INmem"], "color":colors["IN"]},
-                  "OUT":{"spikeStream":spikesOutput["data"], "label":"OUT", "sublabels":["OUTcue", "OUTmem"], "color":colors["OUT"]}}
+    spikesInfo = {"IN":{"spikeStream":spikesInput["data"], "label":"IN", "sublabels":["INcue", "INcont"], "color":colors["IN"]},
+                  "OUT":{"spikeStream":spikesOutput["data"], "label":"OUT", "sublabels":["OUTcue", "OUTcont"], "color":colors["OUT"]}}
 
     # Create visual plot of sequence of spikes along the network during simulation
     # Only in/out
     plot.plot_spike_sequence(spikesInfo=spikesInfo, timeStream=timeStream, numCueBinaryNeuron=spikesDG["numNeurons"],
-                             numMemNeuron=data["memSize"], spikeAmplitude=spikeAmplitude, marginAddLim=marginAddLim,
+                             numContNeuron=data["contSize"], spikeAmplitude=spikeAmplitude, marginAddLim=marginAddLim,
                              fontsize=fontsize, figSize=figSize, figTitle=figSpikeTitle, isPlot=isPlotShow, isSave=isPlotSave,
                              saveFigName=saveFileName+"_in_out_spikes", saveFigPath=baseSavePath)
     # All spikes
     spikesInfo["DG"] = {"spikeStream":spikesDG["data"], "label":"DG", "sublabels":["DG"], "color":colors["DG"]}
     spikesInfo["CA3cue"] = {"spikeStream":spikesCA3cue["data"], "label":"CA3cue", "sublabels":["CA3cue"], "color":colors["CA3cue"]}
-    spikesInfo["CA3mem"] = {"spikeStream":spikesCA3mem["data"], "label":"CA3mem", "sublabels":["CA3mem"], "color":colors["CA3mem"]}
+    spikesInfo["CA3cont"] = {"spikeStream":spikesCA3cont["data"], "label":"CA3cont", "sublabels":["CA3cont"], "color":colors["CA3cont"]}
     spikesInfo["CA1"] = {"spikeStream": spikesCA1["data"], "label": "CA1", "sublabels": ["CA1"], "color": colors["CA1"]}
     plot.plot_spike_sequence(spikesInfo=spikesInfo, timeStream=timeStream,
                              numCueBinaryNeuron=spikesDG["numNeurons"],
-                             numMemNeuron=data["memSize"], spikeAmplitude=spikeAmplitude, marginAddLim=marginAddLim,
+                             numContNeuron=data["contSize"], spikeAmplitude=spikeAmplitude, marginAddLim=marginAddLim,
                              fontsize=fontsize, figSize=figSize, figTitle=figSpikeTitle, isPlot=isPlotShow,
                              isSave=isPlotSave,
                              saveFigName=saveFileName + "_all_spikes", saveFigPath=baseSavePath)
@@ -92,7 +92,7 @@ def processing_data(spikeAmplitude, marginAddLim, fontsize, figSize, figSpikeTit
     # Create a txt file with the sequence of spikes formatted
     plot.generate_table_txt(spikesInfo=spikesInfo, timeStream=timeStream,
                             numCueBinaryNeuron=spikesDG["numNeurons"],
-                            numCueOneHotNeuron=data["cueSize"], numMemNeuron=data["memSize"],
+                            numCueOneHotNeuron=data["cueSize"], numContNeuron=data["contSize"],
                             endianness=data["endianness"], allTimeStampInTrace=allTimeStampInTrace,
                             iSMetaDataSave=False,
                             fileSavePath=baseSavePath, fileSaveName=saveFileName + "_all_spike", headers=headers,
@@ -100,7 +100,7 @@ def processing_data(spikeAmplitude, marginAddLim, fontsize, figSize, figSpikeTit
     # Create an excel table with the sequence of spikes formatted
     plot.generate_table_excel(spikesInfo=spikesInfo, timeStream=timeStream,
                               numCueBinaryNeuron=spikesDG["numNeurons"],
-                              numCueOneHotNeuron=data["cueSize"], numMemNeuron=data["memSize"],
+                              numCueOneHotNeuron=data["cueSize"], numContNeuron=data["contSize"],
                               endianness=data["endianness"], allTimeStampInTrace=allTimeStampInTrace,
                               iSMetaDataSave=False,
                               fileSavePath=baseSavePath, fileSaveName=saveFileName + "_all_spike",
@@ -108,17 +108,17 @@ def processing_data(spikeAmplitude, marginAddLim, fontsize, figSize, figSpikeTit
                               colors=excelColors, orientationFormat=orientationFormat, headers=headers,
                               boxTableSize=boxTableSize)
 
-    # Plot weight evolution of the PCcue-PCmem layer neurons if applicable
+    # Plot weight evolution of the CA3cue-CA3cont layer neurons if applicable
     if recordWeight:
-        # Generate as many colors as number of PCcue neurons
+        # Generate as many colors as number of CA3cue neurons
         colors = []
         for i in range(spikesCA3cue["numNeurons"]):
             colors.append('#%06X' % random.randint(0, 0xFFFFFF))
         # Create the weight plots
-        plot.plot_weight_syn_in_all_neuron(srcNeuronIds=wCA3cue_CA3mem["data"]["srcNeuronId"], dstNeuronIds=wCA3cue_CA3mem["data"]["dstNeuronId"],
-                                           timeStreams=wCA3cue_CA3mem["data"]["timeStamp"], weightsStream=wCA3cue_CA3mem["data"]["w"],
-                                           zlimit=[data["synParameters"]["CA3cueL-CA3memL"]["w_min"] - 0.5,
-                                         data["synParameters"]["CA3cueL-CA3memL"]["w_max"] + 0.5],
+        plot.plot_weight_syn_in_all_neuron(srcNeuronIds=wCA3cue_CA3cont["data"]["srcNeuronId"], dstNeuronIds=wCA3cue_CA3cont["data"]["dstNeuronId"],
+                                           timeStreams=wCA3cue_CA3cont["data"]["timeStamp"], weightsStream=wCA3cue_CA3cont["data"]["w"],
+                                           zlimit=[data["synParameters"]["CA3cueL-CA3contL"]["w_min"] - 0.5,
+                                         data["synParameters"]["CA3cueL-CA3contL"]["w_max"] + 0.5],
                                            colors=colors, baseFigTitle=figWeightTitle, figSize=figSize, fontsize=fontsize,
                                            iSplot=isPlotShow, iSsave=isPlotSave, saveFigName=saveFileName+"_weight",
                                            saveFigPath=baseSavePath)

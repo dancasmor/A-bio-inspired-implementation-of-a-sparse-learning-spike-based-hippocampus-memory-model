@@ -23,7 +23,7 @@ def decimal_to_binary_list(decimalList):
     """
     Convert a list of decimal numbers to a list of binary numbers, each binary value is a list of 0's and 1's
 
-    @param decimalList:
+    @param decimalList: list of decimal values
     @return:
     """
     # Create the list of cues in binary
@@ -38,7 +38,7 @@ def complement_binary_list(binaryList):
     """
     Complement all values in binary list
 
-    @param binaryList:
+    @param binaryList: list of binary values
     @return:
     """
     complementList = [[] for i in range(len(binaryList))]
@@ -55,8 +55,8 @@ def format_cue_vectors(binaryCueValues, cueSizeInBin):
     """
     Format the input list of binary values to have the same size of numbers of neuron in the input cue population
 
-    @param binaryCueValues:
-    @param cueSizeInBin:
+    @param binaryCueValues: input cue values in binary
+    @param cueSizeInBin: input cue size in binary
     @return:
     """
     for index in range(len(binaryCueValues)):
@@ -73,12 +73,12 @@ def create_cue_input_vector(cue, binaryCueValues, currentOperationTime, operatio
     """
     Take a list of binary values to assign them to the correct cue neuron in the correct time stamp to do the operation
 
-    @param cue:
-    @param binaryCueValues:
-    @param currentOperationTime:
-    @param operationTime:
-    @param holdingTime:
-    @param numOperations:
+    @param cue: cue values list
+    @param binaryCueValues: input cue values in binary
+    @param currentOperationTime: current units of time of the test
+    @param operationTime: array of units of time needed to get to the next operation
+    @param holdingTime: number of unit time to hold the value
+    @param numOperations: cont of the number of operation
     @return:
     """
     # Associate each binary value of each cue as an activation of a neuron input
@@ -100,12 +100,12 @@ def create_alternate_cue_input_vector(cue, binaryCueValues, currentOperationTime
     Take a list of binary values to assign them to the correct cue neuron in the correct time stamp to do the operation
     adding 2 times the value once for writing and once for reading it
 
-    @param cue:
-    @param binaryCueValues:
-    @param currentOperationTime:
-    @param operationTime:
-    @param holdingTime:
-    @param numOperations:
+    @param cue: cue values list
+    @param binaryCueValues: input cue size in binary values
+    @param currentOperationTime: current units of time of the test
+    @param operationTime: array of units of time needed to get to the next operation
+    @param holdingTime: number of unit time to hold the value
+    @param numOperations: cont of the number of operation
     @return:
     """
     # Associate each binary value of each cue as an activation of a neuron input
@@ -132,44 +132,44 @@ def create_alternate_cue_input_vector(cue, binaryCueValues, currentOperationTime
     return cue, numOperations, currentOperationTime
 
 
-def create_mem_input_vector(mem, memBinValues, currentOperationTime, operationTime, holdingTime):
+def create_cont_input_vector(cont, contBinValues, currentOperationTime, operationTime, holdingTime):
     """
-        Take a list of binary values to assign them to the correct memory neuron in the correct time stamp to do the operation
+        Take a list of binary values to assign them to the correct content neuron in the correct time stamp to do the operation
 
-        @param mem:
-        @param memBinValues:
-        @param currentOperationTime:
-        @param operationTime:
-        @param holdingTime:
+        @param cont: content values list
+        @param contBinValues: input cont size in binary
+        @param currentOperationTime: current units of time of the test
+        @param operationTime: array of units of time needed to get to the next operation
+        @param holdingTime: number of unit time to hold the value
         @return:
     """
     # Associate each binary value of each cue as an activation of a neuron input
-    for indexMem, memBinValue in enumerate(memBinValues):
-        for indexValue, binaryValue in enumerate(memBinValue):
+    for indexCont, contBinValue in enumerate(contBinValues):
+        for indexValue, binaryValue in enumerate(contBinValue):
             # Only put "active" values (1 in binary)
             if binaryValue == 1:
                 # Hold the values as time as the operation need
                 for holdingIndex in range(holdingTime):
-                    mem[indexValue].append(currentOperationTime + holdingIndex)
+                    cont[indexValue].append(currentOperationTime + holdingIndex)
         # Add to the current operation time the minimum time to begin the next operation
         currentOperationTime = currentOperationTime + operationTime
-    return mem, currentOperationTime
+    return cont, currentOperationTime
 
 
-def create_input_vector_from_operations(mem, cue, operations, memBinValues, binaryCueValues, currentOperationTime, operationTime, holdingTime, numberOfOperations):
+def create_input_vector_from_operations(cont, cue, operations, contBinValues, binaryCueValues, currentOperationTime, operationTime, holdingTime, numberOfOperations):
     """
-    Take a list of binary cue and mem values to assign them to the correct mem and cue neuron in the correct time
+    Take a list of binary cue and cont values to assign them to the correct cont and cue neuron in the correct time
     stamp to do the operations passed
 
-    @param mem:
-    @param cue:
-    @param operations:
-    @param memBinValues:
-    @param binaryCueValues:
-    @param currentOperationTime:
-    @param operationTime:
-    @param holdingTime:
-    @param numberOfOperations:
+    @param cont: content values list
+    @param cue: cue values list
+    @param operations: operations to do
+    @param contBinValues: input cont size in binary
+    @param binaryCueValues: input cue size in binary values
+    @param currentOperationTime: current units of time of the test
+    @param operationTime: array of units of time needed to get to the next operation
+    @param holdingTime: number of unit time to hold the value
+    @param numberOfOperations: cont of the number of operation
     @return:
     """
     # For each operation:
@@ -183,31 +183,31 @@ def create_input_vector_from_operations(mem, cue, operations, memBinValues, bina
                     cue[indexValue].append(currentOperationTime + holdingIndex)
         # Associate the memories values to neurons if writing operation
         if operation == 0:
-            for indexValue, binaryValue in enumerate(memBinValues[indexOperation]):
+            for indexValue, binaryValue in enumerate(contBinValues[indexOperation]):
                 # Only put "active" values (1 in binary)
                 if binaryValue == 1:
                     # Hold the values as time as the operation need
                     for holdingIndex in range(holdingTime[operation]):
-                        mem[indexValue].append(currentOperationTime + holdingIndex)
+                        cont[indexValue].append(currentOperationTime + holdingIndex)
         # Add to the current operation time the minimum time to begin the next operation
         currentOperationTime = currentOperationTime + operationTime[operation]
         numberOfOperations = numberOfOperations + 1
 
-    return cue, mem, currentOperationTime, numberOfOperations
+    return cue, cont, currentOperationTime, numberOfOperations
 
 
-def tb_piramidal_sequence(cueSize, memSize, cueSizeInBin, readingOperationTime, readingOperationDataHolding, writingOperationTime, writingOperationDataHolding):
+def tb_piramidal_sequence(cueSize, contSize, cueSizeInBin, readingOperationTime, readingOperationDataHolding, writingOperationTime, writingOperationDataHolding):
     """
     Create the following sequence: for each cue write the cue as a memory, read all cues, write them
     but complemented, read all cues, write them but complemented again and read all cues.
 
-    @param cueSize:
-    @param memSize:
-    @param cueSizeInBin:
-    @param readingOperationTime:
-    @param readingOperationDataHolding:
-    @param writingOperationTime:
-    @param writingOperationDataHolding:
+    @param cueSize: Max number of patterns to store
+    @param contSize: Size of patterns to store (number of bits)
+    @param cueSizeInBin: input cue size in binary
+    @param readingOperationTime: Time to begin the next operation after a read operation
+    @param readingOperationDataHolding: Data holding time at the input for a reading operation
+    @param writingOperationTime: Time to begin the next operation after a write operation
+    @param writingOperationDataHolding: Data holding time at the input for a writing operation
     @return:
     """
     ## 1) Writing all cues
@@ -223,32 +223,32 @@ def tb_piramidal_sequence(cueSize, memSize, cueSizeInBin, readingOperationTime, 
     cue, numOperations, currentOperationTime = create_cue_input_vector(cue, binaryCue, currentOperationTime, writingOperationTime,
                                                                        writingOperationDataHolding, numOperations)
 
-    # + Create the input mem activity vector
-    #   * Create the empty mem vector
-    mem = [[] for i in range(memSize)]
-    #   * Create the list of memories in decimal
-    numOperationsMem = numOperations
-    decimalMem = [(i + 1) % (2 ** memSize) for i in range(numOperationsMem)]
-    #   * Convert the mem from decimal to binary and fix it to the correct input size
-    binaryMem = format_cue_vectors(decimal_to_binary_list(decimalMem), memSize)
+    # + Create the input cont activity vector
+    #   * Create the empty cont vector
+    cont = [[] for i in range(contSize)]
+    #   * Create the list of content in decimal
+    numOperationsCont = numOperations
+    decimalCont = [(i + 1) % (2 ** contSize) for i in range(numOperationsCont)]
+    #   * Convert the cont from decimal to binary and fix it to the correct input size
+    binaryCont = format_cue_vectors(decimal_to_binary_list(decimalCont), contSize)
     #   * Generate the data to store
-    currentOperationTimeMem = 1
-    mem, currentOperationTime = create_mem_input_vector(mem, binaryMem, currentOperationTimeMem, writingOperationTime,
+    currentOperationTimeCont = 1
+    cont, currentOperationTime = create_cont_input_vector(cont, binaryCont, currentOperationTimeCont, writingOperationTime,
                                                          writingOperationDataHolding)
 
     ## 2) Reading all cues
     cue, numOperations, currentOperationTime = create_cue_input_vector(cue, binaryCue, currentOperationTime, readingOperationTime,
                                                                        readingOperationDataHolding, numOperations)
 
-    ## 3) Write the complementary of the current memory
+    ## 3) Write the complementary of the current content
     #   * Cue
-    currentOperationTimeMem = currentOperationTime
+    currentOperationTimeCont = currentOperationTime
     cue, numOperations, currentOperationTime = create_cue_input_vector(cue, binaryCue, currentOperationTime,
                                                                        writingOperationTime,
                                                                        writingOperationDataHolding, numOperations)
-    #   * Memory (complemented)
-    binaryMem = complement_binary_list(binaryMem)
-    mem, currentOperationTime = create_mem_input_vector(mem, binaryMem, currentOperationTimeMem, writingOperationTime,
+    #   * Content (complemented)
+    binaryCont = complement_binary_list(binaryCont)
+    cont, currentOperationTime = create_cont_input_vector(cont, binaryCont, currentOperationTimeCont, writingOperationTime,
                                                          writingOperationDataHolding)
 
     ## 4) Read all cues
@@ -256,15 +256,15 @@ def tb_piramidal_sequence(cueSize, memSize, cueSizeInBin, readingOperationTime, 
                                                                        readingOperationTime,
                                                                        readingOperationDataHolding, numOperations)
 
-    ## 5) Write the complementary of the current memory
+    ## 5) Write the complementary of the current content
     #   * Cue
-    currentOperationTimeMem = currentOperationTime
+    currentOperationTimeCont = currentOperationTime
     cue, numOperations, currentOperationTime = create_cue_input_vector(cue, binaryCue, currentOperationTime,
                                                                        writingOperationTime,
                                                                        writingOperationDataHolding, numOperations)
-    #   * Memory (complemented)
-    binaryMem = complement_binary_list(binaryMem)
-    mem, currentOperationTime = create_mem_input_vector(mem, binaryMem, currentOperationTimeMem,
+    #   * Content (complemented)
+    binaryCont = complement_binary_list(binaryCont)
+    cont, currentOperationTime = create_cont_input_vector(cont, binaryCont, currentOperationTimeCont,
                                                          writingOperationTime,
                                                          writingOperationDataHolding)
 
@@ -273,22 +273,22 @@ def tb_piramidal_sequence(cueSize, memSize, cueSizeInBin, readingOperationTime, 
                                                                        readingOperationTime,
                                                                        readingOperationDataHolding, numOperations)
 
-    return cue, mem, currentOperationTime, numOperations
+    return cue, cont, currentOperationTime, numOperations
 
 
-def tb_piramidal_reinforced(cueSize, memSize, cueSizeInBin, readingOperationTime, readingOperationDataHolding, writingOperationTime, writingOperationDataHolding):
+def tb_piramidal_reinforced(cueSize, contSize, cueSizeInBin, readingOperationTime, readingOperationDataHolding, writingOperationTime, writingOperationDataHolding):
     """
-    Create the following sequence: for each cue write the cue as a memory and read it at the same time (reinforced writing),
+    Create the following sequence: for each cue write the cue as a content and read it at the same time (reinforced writing),
     read all cues, reinforced write them but complemented, read all cues, reinforced write them but complemented again
     and read all cues.
 
-    @param cueSize:
-    @param memSize:
-    @param cueSizeInBin:
-    @param readingOperationTime:
-    @param readingOperationDataHolding:
-    @param writingOperationTime:
-    @param writingOperationDataHolding:
+    @param cueSize: Max number of patterns to store
+    @param contSize: Size of patterns to store (number of bits)
+    @param cueSizeInBin: input cue size in binary
+    @param readingOperationTime: Time to begin the next operation after a read operation
+    @param readingOperationDataHolding: Data holding time at the input for a reading operation
+    @param writingOperationTime: Time to begin the next operation after a write operation
+    @param writingOperationDataHolding: Data holding time at the input for a writing operation
     @return:
     """
     # 1) Write and read all memories alternatively
@@ -309,17 +309,17 @@ def tb_piramidal_reinforced(cueSize, memSize, cueSizeInBin, readingOperationTime
                                                                                   readingOperationDataHolding],
                                                                                  numOperations)
 
-    # + Create the input mem activity vector
-    #   * Create the empty mem vector
-    mem = [[] for i in range(memSize)]
-    #   * Create the list of memories in decimal
-    numOperationsMem = int(numOperations / 2)
-    decimalMem = [(i + 1) % (2 ** memSize) for i in range(numOperationsMem)]
-    #   * Convert the mem from decimal to binary and fix it to the correct input size
-    binaryMem = format_cue_vectors(decimal_to_binary_list(decimalMem), memSize)
+    # + Create the input cont activity vector
+    #   * Create the empty cont vector
+    cont = [[] for i in range(contSize)]
+    #   * Create the list of contents in decimal
+    numOperationsCont = int(numOperations / 2)
+    decimalCont = [(i + 1) % (2 ** contSize) for i in range(numOperationsCont)]
+    #   * Convert the cont from decimal to binary and fix it to the correct input size
+    binaryCont = format_cue_vectors(decimal_to_binary_list(decimalCont), contSize)
     #   * Generate the data to store
-    currentOperationTimeMem = 1
-    mem, currentOperationTime = create_mem_input_vector(mem, binaryMem, currentOperationTimeMem,
+    currentOperationTimeCont = 1
+    cont, currentOperationTime = create_cont_input_vector(cont, binaryCont, currentOperationTimeCont,
                                                          writingOperationTime + readingOperationTime,
                                                          writingOperationDataHolding)
 
@@ -330,16 +330,16 @@ def tb_piramidal_reinforced(cueSize, memSize, cueSizeInBin, readingOperationTime
 
     # 3) Write and read the complementary
     #   * Cue
-    currentOperationTimeMem = currentOperationTime
+    currentOperationTimeCont = currentOperationTime
     cue, numOperations, currentOperationTime = create_alternate_cue_input_vector(cue, binaryCue, currentOperationTime,
                                                                                  [writingOperationTime,
                                                                                   readingOperationTime],
                                                                                  [writingOperationDataHolding,
                                                                                   readingOperationDataHolding],
                                                                                  numOperations)
-    #   * Memories (complemented)
-    binaryMem = complement_binary_list(binaryMem)
-    mem, currentOperationTime = create_mem_input_vector(mem, binaryMem, currentOperationTimeMem,
+    #   * Content (complemented)
+    binaryCont = complement_binary_list(binaryCont)
+    cont, currentOperationTime = create_cont_input_vector(cont, binaryCont, currentOperationTimeCont,
                                                          writingOperationTime + readingOperationTime,
                                                          writingOperationDataHolding)
 
@@ -350,16 +350,16 @@ def tb_piramidal_reinforced(cueSize, memSize, cueSizeInBin, readingOperationTime
 
     # 5) Write and read the complementary
     #   * Cue
-    currentOperationTimeMem = currentOperationTime
+    currentOperationTimeCont = currentOperationTime
     cue, numOperations, currentOperationTime = create_alternate_cue_input_vector(cue, binaryCue, currentOperationTime,
                                                                                  [writingOperationTime,
                                                                                   readingOperationTime],
                                                                                  [writingOperationDataHolding,
                                                                                   readingOperationDataHolding],
                                                                                  numOperations)
-    #   * Memories (complemented)
-    binaryMem = complement_binary_list(binaryMem)
-    mem, currentOperationTime = create_mem_input_vector(mem, binaryMem, currentOperationTimeMem,
+    #   * Content (complemented)
+    binaryCont = complement_binary_list(binaryCont)
+    cont, currentOperationTime = create_cont_input_vector(cont, binaryCont, currentOperationTimeCont,
                                                          writingOperationTime + readingOperationTime,
                                                          writingOperationDataHolding)
 
@@ -367,21 +367,21 @@ def tb_piramidal_reinforced(cueSize, memSize, cueSizeInBin, readingOperationTime
     cue, numOperations, currentOperationTime = create_cue_input_vector(cue, binaryCue, currentOperationTime,
                                                                        readingOperationTime,
                                                                        readingOperationDataHolding, numOperations)
-    return cue, mem, currentOperationTime, numOperations
+    return cue, cont, currentOperationTime, numOperations
 
 
-def tb_stress_reinforced(cueSize, memSize, cueSizeInBin, readingOperationTime, readingOperationDataHolding, writingOperationTime, writingOperationDataHolding):
+def tb_stress_reinforced(cueSize, contSize, cueSizeInBin, readingOperationTime, readingOperationDataHolding, writingOperationTime, writingOperationDataHolding):
     """
     Create the same sequence that tb_piramidal_reinforced but adding at the end 3 reading of all cues and 3 reinforced
     writings operations to try to stress the network
 
-    @param cueSize:
-    @param memSize:
-    @param cueSizeInBin:
-    @param readingOperationTime:
-    @param readingOperationDataHolding:
-    @param writingOperationTime:
-    @param writingOperationDataHolding:
+    @param cueSize: Max number of patterns to store
+    @param contSize: Size of patterns to store (number of bits)
+    @param cueSizeInBin: input cue size in binary
+    @param readingOperationTime: Time to begin the next operation after a read operation
+    @param readingOperationDataHolding: Data holding time at the input for a reading operation
+    @param writingOperationTime: Time to begin the next operation after a write operation
+    @param writingOperationDataHolding: Data holding time at the input for a writing operation
     @return:
     """
     # 1) Write and read all memories alternatively
@@ -399,17 +399,17 @@ def tb_stress_reinforced(cueSize, memSize, cueSizeInBin, readingOperationTime, r
                                                                                  [writingOperationTime, readingOperationTime],
                                                                                  [writingOperationDataHolding,readingOperationDataHolding], numOperations)
 
-    # + Create the input mem activity vector
-    #   * Create the empty mem vector
-    mem = [[] for i in range(memSize)]
-    #   * Create the list of memories in decimal
-    numOperationsMem = int(numOperations/2)
-    decimalMem = [(i + 1) % (2 ** memSize) for i in range(numOperationsMem)]
-    #   * Convert the mem from decimal to binary and fix it to the correct input size
-    binaryMem = format_cue_vectors(decimal_to_binary_list(decimalMem), memSize)
+    # + Create the input cont activity vector
+    #   * Create the empty cont vector
+    cont = [[] for i in range(contSize)]
+    #   * Create the list of contents in decimal
+    numOperationsCont = int(numOperations/2)
+    decimalCont = [(i + 1) % (2 ** contSize) for i in range(numOperationsCont)]
+    #   * Convert the cont from decimal to binary and fix it to the correct input size
+    binaryCont = format_cue_vectors(decimal_to_binary_list(decimalCont), contSize)
     #   * Generate the data to store
-    currentOperationTimeMem = 1
-    mem, currentOperationTime = create_mem_input_vector(mem, binaryMem, currentOperationTimeMem,
+    currentOperationTimeCont = 1
+    cont, currentOperationTime = create_cont_input_vector(cont, binaryCont, currentOperationTimeCont,
                                                          writingOperationTime + readingOperationTime,
                                                          writingOperationDataHolding)
 
@@ -420,13 +420,13 @@ def tb_stress_reinforced(cueSize, memSize, cueSizeInBin, readingOperationTime, r
 
     # 3) Write and read the complementary
     #   * Cue
-    currentOperationTimeMem = currentOperationTime
+    currentOperationTimeCont = currentOperationTime
     cue, numOperations, currentOperationTime = create_alternate_cue_input_vector(cue, binaryCue, currentOperationTime,
                                                                                  [writingOperationTime, readingOperationTime],
                                                                                  [writingOperationDataHolding,readingOperationDataHolding], numOperations)
-    #   * Memories (complemented)
-    binaryMem = complement_binary_list(binaryMem)
-    mem, currentOperationTime = create_mem_input_vector(mem, binaryMem, currentOperationTimeMem,
+    #   * Content (complemented)
+    binaryCont = complement_binary_list(binaryCont)
+    cont, currentOperationTime = create_cont_input_vector(cont, binaryCont, currentOperationTimeCont,
                                                          writingOperationTime + readingOperationTime,
                                                          writingOperationDataHolding)
 
@@ -437,13 +437,13 @@ def tb_stress_reinforced(cueSize, memSize, cueSizeInBin, readingOperationTime, r
 
     # 5) Write and read the complementary
     #   * Cue
-    currentOperationTimeMem = currentOperationTime
+    currentOperationTimeCont = currentOperationTime
     cue, numOperations, currentOperationTime = create_alternate_cue_input_vector(cue, binaryCue, currentOperationTime,
                                                                                  [writingOperationTime, readingOperationTime],
                                                                                  [writingOperationDataHolding,readingOperationDataHolding], numOperations)
-    #   * Memories (complemented)
-    binaryMem = complement_binary_list(binaryMem)
-    mem, currentOperationTime = create_mem_input_vector(mem, binaryMem, currentOperationTimeMem,
+    #   * Content (complemented)
+    binaryCont = complement_binary_list(binaryCont)
+    cont, currentOperationTime = create_cont_input_vector(cont, binaryCont, currentOperationTimeCont,
                                                          writingOperationTime + readingOperationTime,
                                                          writingOperationDataHolding)
 
@@ -456,72 +456,72 @@ def tb_stress_reinforced(cueSize, memSize, cueSizeInBin, readingOperationTime, r
     # 7) Write and read all memories alternatively and complemented 3 times
     for i in range(3):
         #   * Cue
-        currentOperationTimeMem = currentOperationTime
+        currentOperationTimeCont = currentOperationTime
         cue, numOperations, currentOperationTime = create_alternate_cue_input_vector(cue, binaryCue, currentOperationTime,
                                                                                      [writingOperationTime,
                                                                                       readingOperationTime],
                                                                                      [writingOperationDataHolding,
                                                                                       readingOperationDataHolding],
                                                                                      numOperations)
-        #   * Memories (complemented)
-        binaryMem = complement_binary_list(binaryMem)
-        mem, currentOperationTime = create_mem_input_vector(mem, binaryMem, currentOperationTimeMem,
+        #   * Content (complemented)
+        binaryCont = complement_binary_list(binaryCont)
+        cont, currentOperationTime = create_cont_input_vector(cont, binaryCont, currentOperationTimeCont,
                                                              writingOperationTime + readingOperationTime,
                                                              writingOperationDataHolding)
 
-    return cue, mem, currentOperationTime, numOperations
+    return cue, cont, currentOperationTime, numOperations
 
 
-def tb_random_operations(cueSize, memSize, cueSizeInBin, readingOperationTime, readingOperationDataHolding, writingOperationTime, writingOperationDataHolding, numberOfOperations):
+def tb_random_operations(cueSize, contSize, cueSizeInBin, readingOperationTime, readingOperationDataHolding, writingOperationTime, writingOperationDataHolding, numberOfOperations):
     """
-    Generate a random sequence of reading and writing operations with random cues and memories values in the limits
+    Generate a random sequence of reading and writing operations with random cues and contents values in the limits
     of the network parameters
 
-    @param cueSize:
-    @param memSize:
-    @param cueSizeInBin:
-    @param readingOperationTime:
-    @param readingOperationDataHolding:
-    @param writingOperationTime:
-    @param writingOperationDataHolding:
-    @param numberOfOperations:
+    @param cueSize: Max number of patterns to store
+    @param contSize: Size of patterns to store (number of bits)
+    @param cueSizeInBin: input cue size in binary
+    @param readingOperationTime: Time to begin the next operation after a read operation
+    @param readingOperationDataHolding: Data holding time at the input for a reading operation
+    @param writingOperationTime: Time to begin the next operation after a write operation
+    @param writingOperationDataHolding: Data holding time at the input for a writing operation
+    @param numberOfOperations: number of random operation for the random test
     @return:
     """
     # Create the vector of random operations: 0 = learning and 1 = recalling
     operations = np.random.randint(0, 2, numberOfOperations)
     numLearning = np.count_nonzero(operations==0)
     numRecalling = np.count_nonzero(operations==1)
-    # Create the vector of random operations and memories values
+    # Create the vector of random operations and content values
     decimalCue = np.random.randint(1, cueSize + 1, numberOfOperations)
-    decimalMem = np.random.randint(1, 2 ** memSize, numberOfOperations)
+    decimalCont = np.random.randint(1, 2 ** contSize, numberOfOperations)
 
-    # Convert the memories and cue from decimal to binary and fix it to the correct input size
+    # Convert the content and cue from decimal to binary and fix it to the correct input size
     binaryCue = format_cue_vectors(decimal_to_binary_list(decimalCue), cueSizeInBin)
-    binaryMem = format_cue_vectors(decimal_to_binary_list(decimalMem), memSize)
+    binaryCont = format_cue_vectors(decimal_to_binary_list(decimalCont), contSize)
 
-    # Create the empty cue and mem vector
+    # Create the empty cue and cont vector
     cue = [[] for i in range(cueSizeInBin)]
-    mem = [[] for i in range(memSize)]
+    cont = [[] for i in range(contSize)]
 
     # Associate values to neurons
     currentOperationTime = 1
     numOperations = 0
-    cue, mem, currentOperationTime, numOperations = create_input_vector_from_operations(mem, cue, operations, binaryMem,
+    cue, cont, currentOperationTime, numOperations = create_input_vector_from_operations(cont, cue, operations, binaryCont,
                                                                                               binaryCue, currentOperationTime,
                                                                                               [writingOperationTime,
                                                                                                readingOperationTime],
                                                                                               [writingOperationDataHolding,
                                                                                                readingOperationDataHolding],
                                                                                               numOperations)
-    return cue, mem, currentOperationTime, numOperations, numLearning, numRecalling
+    return cue, cont, currentOperationTime, numOperations, numLearning, numRecalling
 
 
-def testbench(cueSize, memSize, cueSizeInBin, readingOperationTime, readingOperationDataHolding, writingOperationTime, writingOperationDataHolding, tbPath, numberOfOperations):
+def testbench(cueSize, contSize, cueSizeInBin, readingOperationTime, readingOperationDataHolding, writingOperationTime, writingOperationDataHolding, tbPath, numberOfOperations):
     """
     Call a battery of memory testbench to generate the input sequence to the spike memory
 
     @param cueSize: Max number of patterns to store
-    @param memSize: Size of patterns to store (number of bits)
+    @param contSize: Size of patterns to store (number of bits)
     @param cueSizeInBin: input cue size in binary
     @param readingOperationTime: Time to begin the next operation after a read operation
     @param readingOperationDataHolding: Data holding time at the input for a reading operation
@@ -537,18 +537,18 @@ def testbench(cueSize, memSize, cueSizeInBin, readingOperationTime, readingOpera
     tbBasePath = tools.check_and_create_folder(tbPath + "tb_" + time.strftime("%Y_%m_%d__%H_%M_%S") + "/")
 
     # Testbench 1 -> create a piramidal sequence of input
-    cue_seq, mem_seq, minTimeSim, numOperations = tb_piramidal_sequence(cueSize, memSize, cueSizeInBin, readingOperationTime, readingOperationDataHolding, writingOperationTime, writingOperationDataHolding)
+    cue_seq, cont_seq, minTimeSim, numOperations = tb_piramidal_sequence(cueSize, contSize, cueSizeInBin, readingOperationTime, readingOperationDataHolding, writingOperationTime, writingOperationDataHolding)
     print("Testbench 1: piramidal sequence")
     print("Min simulation time to simulate all operations = " + str(minTimeSim) + " ms")
     print("Num of operations = " + str(numOperations))
     # Write the results
-    tb_data = "[input_cue]\nInputSpikesCue = " + str(cue_seq) + "\n[input_mem]\nInputSpikesMem = " + str(mem_seq)
+    tb_data = "[input_cue]\nInputSpikesCue = " + str(cue_seq) + "\n[input_cont]\nInputSpikesCont = " + str(cont_seq)
     tbFullPath = tools.check_and_create_folder(tbBasePath + "tb1_piramidal/")
     path, filename = tools.write_file(tbFullPath, "input_spikes", ".ini", tb_data)
     print(path + "\n\n")
 
     # Testbench 2 -> create a piramidal sequence of input with reinforced writing (write and read in the same cue at the same time)
-    cue_seq, mem_seq, minTimeSim, numOperations = tb_piramidal_reinforced(cueSize, memSize, cueSizeInBin,
+    cue_seq, cont_seq, minTimeSim, numOperations = tb_piramidal_reinforced(cueSize, contSize, cueSizeInBin,
                                                                           readingOperationTime,
                                                                           readingOperationDataHolding,
                                                                           writingOperationTime,
@@ -557,13 +557,13 @@ def testbench(cueSize, memSize, cueSizeInBin, readingOperationTime, readingOpera
     print("Min simulation time to simulate all operations = " + str(minTimeSim) + " ms")
     print("Num of operations = " + str(numOperations))
     # Write the results
-    tb_data = "[input_cue]\nInputSpikesCue = " + str(cue_seq) + "\n[input_mem]\nInputSpikesMem = " + str(mem_seq)
+    tb_data = "[input_cue]\nInputSpikesCue = " + str(cue_seq) + "\n[input_cont]\nInputSpikesCont = " + str(cont_seq)
     tbFullPath = tools.check_and_create_folder(tbBasePath + "tb2_piramidal_reinforced/")
     path, filename = tools.write_file(tbFullPath, "input_spikes", ".ini", tb_data)
     print(path + "\n\n")
 
     # Testbench 3 -> create alternate operation in memory (write and read in the same cue)
-    cue_seq, mem_seq, minTimeSim, numOperations = tb_stress_reinforced(cueSize, memSize, cueSizeInBin,
+    cue_seq, cont_seq, minTimeSim, numOperations = tb_stress_reinforced(cueSize, contSize, cueSizeInBin,
                                                                        readingOperationTime,
                                                                        readingOperationDataHolding,
                                                                        writingOperationTime,
@@ -572,24 +572,24 @@ def testbench(cueSize, memSize, cueSizeInBin, readingOperationTime, readingOpera
     print("Min simulation time to simulate all operations = " + str(minTimeSim) + " ms")
     print("Num of operations = " + str(numOperations))
     # Write the results
-    tb_data = "[input_cue]\nInputSpikesCue = " + str(cue_seq) + "\n[input_mem]\nInputSpikesMem = " + str(mem_seq)
+    tb_data = "[input_cue]\nInputSpikesCue = " + str(cue_seq) + "\n[input_cont]\nInputSpikesCont = " + str(cont_seq)
     tbFullPath = tools.check_and_create_folder(tbBasePath + "tb3_stress_reinforced/")
     path, filename = tools.write_file(tbFullPath, "input_spikes", ".ini", tb_data)
     print(path + "\n\n")
 
     # Testbench 4 -> random operations
-    cue_seq, mem_seq, minTimeSim, numOperations, numLearning, numRecalling = tb_random_operations(cueSize, memSize, cueSizeInBin,
-                                                                       readingOperationTime,
-                                                                       readingOperationDataHolding,
-                                                                       writingOperationTime,
-                                                                       writingOperationDataHolding, numberOfOperations)
+    cue_seq, cont_seq, minTimeSim, numOperations, numLearning, numRecalling = tb_random_operations(cueSize, contSize, cueSizeInBin,
+                                                                                                  readingOperationTime,
+                                                                                                  readingOperationDataHolding,
+                                                                                                  writingOperationTime,
+                                                                                                  writingOperationDataHolding, numberOfOperations)
     print("Testbench 4: random operations")
     print("Min simulation time to simulate all operations = " + str(minTimeSim) + " ms")
     print("Num of operations = " + str(numOperations))
     print(" - Learning = " + str(numLearning))
     print(" - Recalling = " + str(numRecalling))
     # Write the results
-    tb_data = "[input_cue]\nInputSpikesCue = " + str(cue_seq) + "\n[input_mem]\nInputSpikesMem = " + str(mem_seq)
+    tb_data = "[input_cue]\nInputSpikesCue = " + str(cue_seq) + "\n[input_cont]\nInputSpikesCont = " + str(cont_seq)
     tbFullPath = tools.check_and_create_folder(tbBasePath + "tb4_random_operations/")
     path, filename = tools.write_file(tbFullPath, "input_spikes", ".ini", tb_data)
     print(path + "\n\n")
@@ -606,7 +606,7 @@ if __name__ == "__main__":
     #       - Max number of patterns to store
     cueSize = eval(config["memory"]["cueSize"])
     #       - Size of patterns to store (number of bits)
-    memSize = eval(config["memory"]["memSize"])
+    contSize = eval(config["memory"]["contSize"])
     #       - Calculate the input cue size in binary
     cueSizeInBin = math.ceil(math.log2(cueSize + 1))
     #   + Memory times
@@ -626,5 +626,5 @@ if __name__ == "__main__":
     numberOfOperations = eval(config["testbench"]["numberOfOperations"])
 
     # * Create battery of test input sequence
-    testbench(cueSize, memSize, cueSizeInBin, readingOperationTime, readingOperationDataHolding, writingOperationTime,
+    testbench(cueSize, contSize, cueSizeInBin, readingOperationTime, readingOperationDataHolding, writingOperationTime,
               writingOperationDataHolding, tbPath, numberOfOperations)

@@ -12,21 +12,21 @@ import tools
 DG-CA3-CA1 one-hot memory
 
 + Population:
-    + Input: pattern input
-    + DG: one-hot codification of direction of the pattern
-    + CA3cue: store direction/cue of patterns
-    + CA3mem: store content/memories of patterns
+    + Input: memory input
+    + DG: one-hot codification of cue of the memory
+    + CA3cue: store cue of memory
+    + CA3cont: store content of memories
     + CA1: recode the direction of the pattern to make it binary again in the output
     + Output: output of the network
 
 + Synapses: 
-    + Input-DG: 1 to 1 excitatory and static (first n bits: corresponding to the direction of patterns)
-    + Input-CA3mem: 1 to 1 excitatory and static (the rest of the bits)
+    + Input-DG: 1 to 1 excitatory and static (first n bits: corresponding to the cue of memories)
+    + Input-CA3cont: 1 to 1 excitatory and static (the rest of the bits)
     + DG-CA3cue: 1 to 1 excitatory and static
-    + CA3cue-CA3mem: all to all excitatory and dinamic (STDP).
+    + CA3cue-CA3cont: all to all excitatory and dinamic (STDP).
     + CA3cue-CA1: 1 to 1 excitatory and static
     + CA1-Output: 1 to 1 excitatory and static
-    + CA3mem-Output: 1 to 1 excitatory and static
+    + CA3cont-Output: 1 to 1 excitatory and static
 """
 
 # Open configparser object interface to read config files
@@ -43,19 +43,19 @@ config.read(activeConfigFilePath + "memory_config.ini")
 # Max number of patterns to store
 cueSize = eval(config["memory"]["cueSize"])
 # Size of patterns to store (number of bits)
-memSize = eval(config["memory"]["memSize"])
+contSize = eval(config["memory"]["contSize"])
 # Codification of information: "little_endian" o "big_endian"
 endianness = eval(config["memory"]["endianness"])
 
 # + Calculated memory parameters
 # Input size of DG population (decoder)
 dgInputSize = math.ceil(math.log2(cueSize+1))
-# Size of CA3 network in number of neurons neccesary to store the direction/cue and content/memories of patterns
-networkSize = cueSize + memSize
+# Size of CA3 network in number of neurons neccesary to store the cue and content of memories
+networkSize = cueSize + contSize
 # Size of IN population
-ilInputSize = dgInputSize + memSize
+ilInputSize = dgInputSize + contSize
 # Number of neurons for each population
-popNeurons = {"ILayer": ilInputSize, "DGLayer": dgInputSize, "CA3cueLayer": cueSize, "CA3memLayer": memSize, "CA1Layer": cueSize, "OLayer": ilInputSize}
+popNeurons = {"ILayer": ilInputSize, "DGLayer": dgInputSize, "CA3cueLayer": cueSize, "CA3contLayer": contSize, "CA1Layer": cueSize, "OLayer": ilInputSize}
 
 
 # + Network components parameters
@@ -79,14 +79,14 @@ simulationParameters = {"simTime": eval(config["simulationParameters"]["simTime"
 config.read(activeConfigFilePath + "input_spikes.ini")
 # CUE
 InputSpikesCue = eval(config["input_cue"]["InputSpikesCue"])
-# MEM
-InputSpikesMem = eval(config["input_mem"]["InputSpikesMem"])
+# CONT
+InputSpikesCont = eval(config["input_cont"]["InputSpikesCont"])
 # Endianess format
 if endianness == "little_endian":
     InputSpikesCue = np.flip(InputSpikesCue).tolist()
-    InputSpikesMem = np.flip(InputSpikesMem).tolist()
+    InputSpikesCont = np.flip(InputSpikesCont).tolist()
 # Full pattern
-InputSpikes = InputSpikesCue + InputSpikesMem
+InputSpikes = InputSpikesCue + InputSpikesCont
 
 
 # Execute the simulation and store the parameters in a file: weight if load/store weight along the simulation time
@@ -106,9 +106,9 @@ def main(weight):
     # CA3cue
     CA3cueLayer = sim.Population(popNeurons["CA3cueLayer"], sim.IF_curr_exp(**neuronParameters["CA3cueL"]), label="CA3cueLayer")
     CA3cueLayer.set(v=initNeuronParameters["CA3cueL"]["vInit"])
-    # CA3mem
-    CA3memLayer = sim.Population(popNeurons["CA3memLayer"], sim.IF_curr_exp(**neuronParameters["CA3memL"]), label="CA3memLayer")
-    CA3memLayer.set(v=initNeuronParameters["CA3memL"]["vInit"])
+    # CA3cont
+    CA3contLayer = sim.Population(popNeurons["CA3contLayer"], sim.IF_curr_exp(**neuronParameters["CA3contL"]), label="CA3contLayer")
+    CA3contLayer.set(v=initNeuronParameters["CA3contL"]["vInit"])
     # DG (decoder)
     DGLayer = NeuralDecoder(popNeurons["DGLayer"], sim, {"min_delay":synParameters["IL-DGL"]["delay"]},
                             neuronParameters["DGL"], sim.StaticSynapse(weight=synParameters["IL-DGL"]["initWeight"],
@@ -139,23 +139,23 @@ def main(weight):
                                                    delay=synParameters["DGL-CA3cueL"]["delay"]))
     DGLayer.connect_constant_spikes([constant_spike_source.set_source, constant_spike_source.latch.output_neuron])
 
-    # IL-CA3mem -> 1 to 1, excitatory and static (last m neurons of DG: only the number of directions to use)
-    IL_CA3memL_conn = sim.Projection(sim.PopulationView(ILayer, range(dgInputSize, ilInputSize, 1)), CA3memLayer, sim.OneToOneConnector(),
-                                          synapse_type=sim.StaticSynapse(weight=synParameters["IL-CA3memL"]["initWeight"],
-                                                                         delay=synParameters["IL-CA3memL"]["delay"]),
-                                          receptor_type=synParameters["IL-CA3memL"]["receptor_type"])
+    # IL-CA3cont -> 1 to 1, excitatory and static (last m neurons of DG: only the number of directions to use)
+    IL_CA3contL_conn = sim.Projection(sim.PopulationView(ILayer, range(dgInputSize, ilInputSize, 1)), CA3contLayer, sim.OneToOneConnector(),
+                                          synapse_type=sim.StaticSynapse(weight=synParameters["IL-CA3contL"]["initWeight"],
+                                                                         delay=synParameters["IL-CA3contL"]["delay"]),
+                                          receptor_type=synParameters["IL-CA3contL"]["receptor_type"])
 
-    # CA3cue-CA3mem -> all to all STDP
+    # CA3cue-CA3cont -> all to all STDP
     # + Time rule
-    timing_rule = sim.SpikePairRule(tau_plus=synParameters["CA3cueL-CA3memL"]["tau_plus"], tau_minus=synParameters["CA3cueL-CA3memL"]["tau_minus"],
-                                    A_plus=synParameters["CA3cueL-CA3memL"]["A_plus"], A_minus=synParameters["CA3cueL-CA3memL"]["A_minus"])
+    timing_rule = sim.SpikePairRule(tau_plus=synParameters["CA3cueL-CA3contL"]["tau_plus"], tau_minus=synParameters["CA3cueL-CA3contL"]["tau_minus"],
+                                    A_plus=synParameters["CA3cueL-CA3contL"]["A_plus"], A_minus=synParameters["CA3cueL-CA3contL"]["A_minus"])
     # + Weight rule
-    weight_rule = sim.AdditiveWeightDependence(w_max=synParameters["CA3cueL-CA3memL"]["w_max"], w_min=synParameters["CA3cueL-CA3memL"]["w_min"])
+    weight_rule = sim.AdditiveWeightDependence(w_max=synParameters["CA3cueL-CA3contL"]["w_max"], w_min=synParameters["CA3cueL-CA3contL"]["w_min"])
     # + STDP model
     stdp_model = sim.STDPMechanism(timing_dependence=timing_rule, weight_dependence=weight_rule,
-                                   weight=synParameters["CA3cueL-CA3memL"]["initWeight"], delay=synParameters["CA3cueL-CA3memL"]["delay"])
+                                   weight=synParameters["CA3cueL-CA3contL"]["initWeight"], delay=synParameters["CA3cueL-CA3contL"]["delay"])
     # + Create the STDP synapses
-    CA3cueL_CA3memL_conn = sim.Projection(CA3cueLayer, CA3memLayer, sim.AllToAllConnector(allow_self_connections=True), synapse_type=stdp_model)
+    CA3cueL_CA3contL_conn = sim.Projection(CA3cueLayer, CA3contLayer, sim.AllToAllConnector(allow_self_connections=True), synapse_type=stdp_model)
 
     # CA3cue-CA1 -> 1 to 1 excitatory and static
     pop_len = len(CA3cueLayer)
@@ -174,18 +174,18 @@ def main(weight):
                              conn=sim.StaticSynapse(weight=synParameters["CA1L-OL"]["initWeight"],
                                                     delay=synParameters["CA1L-OL"]["delay"]))
 
-    # CA3mem-Output -> 1 to 1 excitatory and static
-    CA3memL_OL_conn = sim.Projection(CA3memLayer, sim.PopulationView(OLayer, range(dgInputSize, ilInputSize, 1)),
+    # CA3cont-Output -> 1 to 1 excitatory and static
+    CA3contL_OL_conn = sim.Projection(CA3contLayer, sim.PopulationView(OLayer, range(dgInputSize, ilInputSize, 1)),
                                       sim.OneToOneConnector(),
-                                      synapse_type=sim.StaticSynapse(weight=synParameters["CA3memL-OL"]["initWeight"],
-                                                                     delay=synParameters["CA3memL-OL"]["delay"]),
-                                      receptor_type=synParameters["CA3memL-OL"]["receptor_type"])
+                                      synapse_type=sim.StaticSynapse(weight=synParameters["CA3contL-OL"]["initWeight"],
+                                                                     delay=synParameters["CA3contL-OL"]["delay"]),
+                                      receptor_type=synParameters["CA3contL-OL"]["receptor_type"])
 
     ######################################
     # Parameters to store
     ######################################
     CA3cueLayer.record(["spikes", "v"])
-    CA3memLayer.record(["spikes", "v"])
+    CA3contLayer.record(["spikes", "v"])
     OLayer.record(["spikes"])
     for gate in DGLayer.and_gates.and_array:
         gate.output_neuron.record(("spikes"))
@@ -197,11 +197,11 @@ def main(weight):
     ######################################
     # The simulation is execute in time intervals to store the weight of synapses if applicable
     if weight:
-        w_CA3cueL_CA3memL = []
-        w_CA3cueL_CA3memL.append(CA3cueL_CA3memL_conn.get('weight', format='list', with_address=True))  # Instante 0
+        w_CA3cueL_CA3contL = []
+        w_CA3cueL_CA3contL.append(CA3cueL_CA3contL_conn.get('weight', format='list', with_address=True))  # Instante 0
         for n in range(0, int(simulationParameters["simTime"]), int(simulationParameters["timeStep"])):
             sim.run(simulationParameters["timeStep"])
-            w_CA3cueL_CA3memL.append(CA3cueL_CA3memL_conn.get('weight', format='list', with_address=True))
+            w_CA3cueL_CA3contL.append(CA3cueL_CA3contL_conn.get('weight', format='list', with_address=True))
     else:
         sim.run(simulationParameters["simTime"])
 
@@ -210,7 +210,7 @@ def main(weight):
     ######################################
     # Get the data from CA3
     CA3cueData = CA3cueLayer.get_data(variables=["spikes", "v"])
-    CA3memData = CA3memLayer.get_data(variables=["spikes", "v"])
+    CA3contData = CA3contLayer.get_data(variables=["spikes", "v"])
 
     # Get data from Output
     OLData = OLayer.get_data(variables=["spikes"])
@@ -218,8 +218,8 @@ def main(weight):
     # Separate for each type of data (each segment = 1 execution/run)
     spikesCA3cue = CA3cueData.segments[0].spiketrains
     vCA3cue = CA3cueData.segments[0].filter(name='v')[0]
-    spikesCA3mem = CA3memData.segments[0].spiketrains
-    vCA3mem = CA3memData.segments[0].filter(name='v')[0]
+    spikesCA3cont = CA3contData.segments[0].spiketrains
+    vCA3cont = CA3contData.segments[0].filter(name='v')[0]
     spikesDG = []
     for gate in DGLayer.and_gates.and_array:
         spikesDG.append(gate.output_neuron.get_data(variables=["spikes"]).segments[0].spiketrains[0])
@@ -239,10 +239,10 @@ def main(weight):
     # Format the retrieve data
     formatVCA3cue = tools.format_neo_data("v", vCA3cue)
     formatSpikesCA3cue = tools.format_neo_data("spikes", spikesCA3cue)
-    formatVCA3mem = tools.format_neo_data("v", vCA3mem)
-    formatSpikesCA3mem = tools.format_neo_data("spikes", spikesCA3mem)
+    formatVCA3cont = tools.format_neo_data("v", vCA3cont)
+    formatSpikesCA3cont = tools.format_neo_data("spikes", spikesCA3cont)
     if weight:
-        formatWeightCA3cueL_CA3memL = tools.format_neo_data("weights", w_CA3cueL_CA3memL,
+        formatWeightCA3cueL_CA3contL = tools.format_neo_data("weights", w_CA3cueL_CA3contL,
                                                            {"simTime": simulationParameters["simTime"],
                                                             "timeStep": simulationParameters["timeStep"]})
     formatSpikeDG = tools.format_neo_data("spikes", spikesDG)
@@ -254,9 +254,9 @@ def main(weight):
     # print("Spikes DG = " + str(formatSpikeDG) + "\n")
     # print("V CA3cueLayer = " + str(formatVCA3cue) + "\n")
     # print("Spikes CA3cueLayer = " + str(formatSpikesCA3cue) + "\n")
-    # print("V CA3memLayer = " + str(formatVCA3mem) + "\n")
-    # print("Spikes CA3memLayer = " + str(formatSpikesCA3mem) + "\n")
-    # print("Weight CA3cueL-CA3memL = " + str(formatWeightCA3cueL_CA3memL) + "\n")
+    # print("V CA3contLayer = " + str(formatVCA3cont) + "\n")
+    # print("Spikes CA3contLayer = " + str(formatSpikesCA3cont) + "\n")
+    # print("Weight CA3cueL-CA3contL = " + str(formatWeightCA3cueL_CA3contL) + "\n")
     # print("Spikes CA1 = " + str(formatSpikeCA1) + "\n")
     # print("Spikes Out = " + str(formatSpikeOut) + "\n")
 
@@ -264,7 +264,7 @@ def main(weight):
     dataOut = {"networkName": simulationParameters["networkName"], "timeStep": simulationParameters["timeStep"],
                "simTime": simulationParameters["simTime"], "synParameters": synParameters,
                "neuronParameters": neuronParameters, "initNeuronParameters": initNeuronParameters,
-               "cueSize": cueSize, "memSize": memSize, "endianness": endianness, "variables": []}
+               "cueSize": cueSize, "contSize": contSize, "endianness": endianness, "variables": []}
     dataOut["variables"].append(
         {"type": "spikes", "popName": "CA3cue Layer", "popNameShort": "CA3cueL", "numNeurons": popNeurons["CA3cueLayer"],
          "data": formatSpikesCA3cue})
@@ -272,14 +272,14 @@ def main(weight):
         {"type": "v", "popName": "CA3cue Layer", "popNameShort": "CA3cueL", "numNeurons": popNeurons["CA3cueLayer"],
          "data": formatVCA3cue})
     dataOut["variables"].append(
-        {"type": "spikes", "popName": "CA3mem Layer", "popNameShort": "CA3memL", "numNeurons": popNeurons["CA3memLayer"],
-         "data": formatSpikesCA3mem})
+        {"type": "spikes", "popName": "CA3cont Layer", "popNameShort": "CA3contL", "numNeurons": popNeurons["CA3contLayer"],
+         "data": formatSpikesCA3cont})
     dataOut["variables"].append(
-        {"type": "v", "popName": "CA3mem Layer", "popNameShort": "CA3memL", "numNeurons": popNeurons["CA3memLayer"],
-         "data": formatVCA3mem})
+        {"type": "v", "popName": "CA3cont Layer", "popNameShort": "CA3contL", "numNeurons": popNeurons["CA3contLayer"],
+         "data": formatVCA3cont})
     if weight:
-        dataOut["variables"].append({"type": "w", "popName": "CA3cueL-CA3memL", "popNameShort": "CA3cueL-CA3memL",
-                                     "data": formatWeightCA3cueL_CA3memL})
+        dataOut["variables"].append({"type": "w", "popName": "CA3cueL-CA3contL", "popNameShort": "CA3cueL-CA3contL",
+                                     "data": formatWeightCA3cueL_CA3contL})
     dataOut["variables"].append(
         {"type": "spikes", "popName": "DG Layer", "popNameShort": "DGL", "numNeurons": popNeurons["DGLayer"],
          "data": formatSpikeDG})

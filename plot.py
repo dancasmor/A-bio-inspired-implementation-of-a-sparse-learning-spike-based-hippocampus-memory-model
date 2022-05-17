@@ -100,7 +100,7 @@ def plot_weight_syn_in_all_neuron(srcNeuronIds, dstNeuronIds, timeStreams, weigh
                                          saveFigPath=saveFigPath)
 
 
-def plot_spike_sequence(spikesInfo, timeStream, numCueBinaryNeuron, numMemNeuron, spikeAmplitude, marginAddLim, fontsize, figSize, figTitle, isPlot, isSave, saveFigName, saveFigPath):
+def plot_spike_sequence(spikesInfo, timeStream, numCueBinaryNeuron, numContNeuron, spikeAmplitude, marginAddLim, fontsize, figSize, figTitle, isPlot, isSave, saveFigName, saveFigPath):
     """
     Plot all spikes of population of neuron given throughout the simulation.
 
@@ -108,7 +108,7 @@ def plot_spike_sequence(spikesInfo, timeStream, numCueBinaryNeuron, numMemNeuron
     {"population_i":{"spikeStream":spikeStream, "label":label, "sublabels": sublabels, "color":color}:, ...}
     @param timeStream: time stamp stream
     @param numCueBinaryNeuron: number of neurons used to address in the input array
-    @param numMemNeuron: number of neurons used to store memories
+    @param numContNeuron: number of neurons used to store content of memory
     @param spikeAmplitude: amplitude of the representation of the spikes in the sequence
     @param marginAddLim: additional margin to the spike amplitude to mark the begin and end of the representation view
     @param fontsize: size of the fonts for the figure
@@ -144,7 +144,7 @@ def plot_spike_sequence(spikesInfo, timeStream, numCueBinaryNeuron, numMemNeuron
             sublabel = " " + spikesInfoSinglePop["sublabels"][0] + "="
             if labelSpike == "IN" or labelSpike == "OUT":
                 sublabelCue = " " + spikesInfoSinglePop["sublabels"][0] + "="
-                sublabelMem = " " + spikesInfoSinglePop["sublabels"][1] + "="
+                sublabelCont = " " + spikesInfoSinglePop["sublabels"][1] + "="
             # For each population of neuron:
             for indexNeuron, spikeStream in enumerate(spikesInfoSinglePop["spikeStream"]):
                 # If the neuron of the current population of neuron fires in the current time stamp:
@@ -154,14 +154,14 @@ def plot_spike_sequence(spikesInfo, timeStream, numCueBinaryNeuron, numMemNeuron
                         if indexNeuron == 0:
                             continue
                         indexNeuron = indexNeuron - 1
-                    # Check label restriction with IN and OUT neuron, difference between IN cue and IN mem
+                    # Check label restriction with IN and OUT neuron, difference between IN cue and IN cont
                     if labelSpike == "IN" or labelSpike == "OUT":
                         if indexNeuron < numCueBinaryNeuron:
                             sublabel = sublabelCue
                             sublabelCue = "-"
                         else:
-                            sublabel = sublabelMem
-                            sublabelMem = "-"
+                            sublabel = sublabelCont
+                            sublabelCont = "-"
                             indexNeuron = indexNeuron - numCueBinaryNeuron
                     # Add new information to the label of the current time stamp
                     labelTimeStamp = labelTimeStamp + sublabel + str(indexNeuron)
@@ -191,7 +191,7 @@ def plot_spike_sequence(spikesInfo, timeStream, numCueBinaryNeuron, numMemNeuron
     return saveFigPath + saveFigName + ".png"
 
 
-def generate_table_txt(spikesInfo, timeStream, numCueBinaryNeuron, numCueOneHotNeuron, numMemNeuron,
+def generate_table_txt(spikesInfo, timeStream, numCueBinaryNeuron, numCueOneHotNeuron, numContNeuron,
                        endianness, allTimeStampInTrace, iSMetaDataSave, fileSavePath, fileSaveName, headers,
                        boxTableSize):
     """
@@ -202,7 +202,7 @@ def generate_table_txt(spikesInfo, timeStream, numCueBinaryNeuron, numCueOneHotN
     @param timeStream: time stamp stream
     @param numCueBinaryNeuron: number of neurons used to address in the input array
     @param numCueOneHotNeuron: number of neurons used to address in One-hot
-    @param numMemNeuron: number of neurons used to store memories
+    @param numContNeuron: number of neurons used to store content of memories
     @param endianness: type of codification of the information stored in memory: "little endian" or "big_endian"
     @param allTimeStampInTrace: if represent all time stamp in trace files or only time stamps where the network is spiking
     @param iSMetaDataSave: bool, if save the middle information in a txt file (all spikes data ordered but not formatted)
@@ -218,7 +218,7 @@ def generate_table_txt(spikesInfo, timeStream, numCueBinaryNeuron, numCueOneHotN
 
     # Get the spikes ordered by time stamp when they were fired and formatted to a more readable style
     spikesOrderedByTimeStampFormatted = tools.get_format_spike_info(spikesInfo, timeStream, numCueBinaryNeuron,
-                                                                    numCueOneHotNeuron, numMemNeuron,
+                                                                    numCueOneHotNeuron, numContNeuron,
                                                                     endianness, iSMetaDataSave, iSMetaDataSave, allTimeStampInTrace,
                                                                     fileSavePath=fileSavePath, fileSaveName=fileSaveName)
 
@@ -240,8 +240,8 @@ def generate_table_txt(spikesInfo, timeStream, numCueBinaryNeuron, numCueOneHotN
     sameOperationEndCount = 0
     beginingOperations = []
     for stamp, spikes in spikesOrderedByTimeStampFormatted.items():
-        [inCue, inMemBin, dgOneHot, ca3Cue, ca3MemBin, ca1bin, outCue, outMem, operationNameBegin, operationNameEnd] = tools.get_string_format_spike_info_each_timestamp(
-            spikes, numCueOneHotNeuron, numMemNeuron, operationCountBegin, operationCountEnd)
+        [inCue, inContBin, dgOneHot, ca3Cue, ca3ContBin, ca1bin, outCue, outCont, operationNameBegin, operationNameEnd] = tools.get_string_format_spike_info_each_timestamp(
+            spikes, numCueOneHotNeuron, numContNeuron, operationCountBegin, operationCountEnd)
 
         # Update the count of operations
         operationNameBegin, sameOperationBeginCount, operationCountBegin, operationNameEnd, sameOperationEndCount, operationCountEnd, beginingOperations = \
@@ -252,13 +252,13 @@ def generate_table_txt(spikesInfo, timeStream, numCueBinaryNeuron, numCueOneHotN
         tableFormatString = tableFormatString + "\t {:{}} {:{}} {:{}} {:{}} {:{}} {:{}}" \
                                                 " {:{}} {:{}} {:{}} {:{}} {:{}} \n".format(str(stamp), boxTableSize,
                                                                   str(inCue), boxTableSize,
-                                                                  str(inMemBin), boxTableSize,
+                                                                  str(inContBin), boxTableSize,
                                                                   str(dgOneHot), boxTableSize,
                                                                   str(ca3Cue), boxTableSize,
-                                                                  str(ca3MemBin), boxTableSize,
+                                                                  str(ca3ContBin), boxTableSize,
                                                                   str(ca1bin), boxTableSize,
                                                                   str(outCue), boxTableSize,
-                                                                  str(outMem), boxTableSize,
+                                                                  str(outCont), boxTableSize,
                                                                   operationNameBegin, boxTableSize,
                                                                   operationNameEnd, boxTableSize)
         tableFormatString = tableFormatString + "--------" + "-" * len(headers) * boxTableSize + "\n"
@@ -268,7 +268,7 @@ def generate_table_txt(spikesInfo, timeStream, numCueBinaryNeuron, numCueOneHotN
     return fullFilePath
 
 
-def generate_table_excel(spikesInfo, timeStream, numCueBinaryNeuron, numCueOneHotNeuron, numMemNeuron,
+def generate_table_excel(spikesInfo, timeStream, numCueBinaryNeuron, numCueOneHotNeuron, numContNeuron,
                          endianness, allTimeStampInTrace, iSMetaDataSave, fileSavePath, fileSaveName, simTime, colors,
                          orientationFormat, headers, boxTableSize):
     """
@@ -279,7 +279,7 @@ def generate_table_excel(spikesInfo, timeStream, numCueBinaryNeuron, numCueOneHo
         @param timeStream: time stamp stream
         @param numCueBinaryNeuron: number of neurons used to address in the input array
         @param numCueOneHotNeuron: number of neurons used to address in One-hot
-        @param numMemNeuron: number of neurons used to store memories
+        @param numContNeuron: number of neurons used to store content of memories
         @param endianness: type of codification of the information stored in memory: "little endian" or "big_endian"
         @param allTimeStampInTrace: if represent all time stamp in trace files or only time stamps where the network is spiking
         @param iSMetaDataSave: bool, if save the middle information in a txt file (all spikes data ordered but not formatted)
@@ -298,7 +298,7 @@ def generate_table_excel(spikesInfo, timeStream, numCueBinaryNeuron, numCueOneHo
 
     # Get the spikes ordered by time stamp when they were fired and formatted to a more readable style
     spikesOrderedByTimeStampFormatted = tools.get_format_spike_info(spikesInfo, timeStream, numCueBinaryNeuron,
-                                                                    numCueOneHotNeuron, numMemNeuron,
+                                                                    numCueOneHotNeuron, numContNeuron,
                                                                     endianness, iSMetaDataSave, iSMetaDataSave,
                                                                     allTimeStampInTrace,
                                                                     fileSavePath=fileSavePath,
@@ -313,8 +313,8 @@ def generate_table_excel(spikesInfo, timeStream, numCueBinaryNeuron, numCueOneHo
     sameOperationEndCount = 0
     beginingOperations = []
     for stamp, spikes in spikesOrderedByTimeStampFormatted.items():
-        [inCue, inMemBin, dgOneHot, ca3Cue, ca3MemBin, ca1bin, outCue, outMem, operationNameBegin, operationNameEnd] = tools.get_string_format_spike_info_each_timestamp(
-            spikes, numCueOneHotNeuron, numMemNeuron, operationCountBegin, operationCountEnd)
+        [inCue, inContBin, dgOneHot, ca3Cue, ca3ContBin, ca1bin, outCue, outCont, operationNameBegin, operationNameEnd] = tools.get_string_format_spike_info_each_timestamp(
+            spikes, numCueOneHotNeuron, numContNeuron, operationCountBegin, operationCountEnd)
 
         # Update the count of operations
         operationNameBegin, sameOperationBeginCount, operationCountBegin, operationNameEnd, sameOperationEndCount, operationCountEnd, beginingOperations = \
@@ -322,7 +322,7 @@ def generate_table_excel(spikesInfo, timeStream, numCueBinaryNeuron, numCueOneHo
                                       operationNameEnd,
                                       sameOperationEndCount, operationCountEnd, beginingOperations)
 
-        matrixSpikeInfo.append([inCue, inMemBin, dgOneHot, ca3Cue, ca3MemBin, ca1bin, outCue, outMem, operationNameBegin, operationNameEnd])
+        matrixSpikeInfo.append([inCue, inContBin, dgOneHot, ca3Cue, ca3ContBin, ca1bin, outCue, outCont, operationNameBegin, operationNameEnd])
 
 
     # Excel file creation
