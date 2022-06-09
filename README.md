@@ -74,7 +74,7 @@ python script.py
 	<li><p align="justify"><a href="data/">data</a> and <a href="plot/">plot</a>: folders where the data files from the network simulation are stored and where the plots of these data are stored respectively.</p></li>
 	<li><p align="justify"><a href="config_files/">config_files</a> folder: contains different folders, one for each desired configuration of the memory model. The <a href="config_files/configFileParameters.ini">configFileParameters.ini</a> file indicates which of all the configurations are to be used. Within each configuration there are 4 files:</p></li>
 		<ul>
-			<li><p align="justify"><a href="config_files/test_01/input_spikes.ini">input_spikes.ini</a>: input spikes to the memory model.</p></li>
+			<li><p align="justify"><a href="config_files/test_01/input_spikes.ini">input_spikes.ini</a>: input spikes to the memory model. For learning operations, spikes need to be held for 3 time units at the input of the memory and no further operation can be performed until 7 time units later. In the case of recall operations, spikes must be displayed for a single time unit and 6 time units must be waited until the next operation. For more information, read the paper.</p></li>
 			<li><p align="justify"><a href="config_files/test_01/memory_config.ini">memory_config.ini</a>: parameters shaping the memory model.</p></li>
 			<li><p align="justify"><a href="config_files/test_01/network_config.json">network_config.json</a>: construction parameters of the neuron and synapse models of the network (it is advisable not to modify them).</p></li>
 			<li><p align="justify"><a href="config_files/test_01/simulation_config.ini">simulation_config.ini</a>: all parameters related to the simulation and graphical representation of the results.</p></li>
@@ -94,7 +94,7 @@ In order to define the parameters of the memory model to be built and the condit
 In case you want to try some of the tests discussed in the paper such as the stress test or the random access test, you can use <a href="memory_testbench.py">memory_testbench.py</a>. It generates the input_spikes.ini necessary to carry out the test, as well as indicating the simulation time required and the number of operations performed.
 </p>
 <p align="justify">
-Finally, in order to be able to use the memory model as a module within an SNN network, we are working on the development of a Python library to facilitate this process, while it is possible to take it from <a href="DG_CA3_CA1_one_hot.py">DG_CA3_CA1_one_hot.py</a> and manage memory input and output connections.
+Finally, in order to be able to use the memory model as a module within a larger SNN network, we have developed a python package that includes this memory model (among others): sPyMem. You can install sPyMem via pip thanks to its <a href="https://pypi.org/project/sPyMem/">PyPi</a> distribution: <code>pip install sPyMem</code> or download it from source on their <a href="https://github.com/dancasmor/sPyMem/">github repository</a>. In this package, the memory model presented in this paper would be called <strong>hippocampus_with_forgetting</strong>.
 </p>
 
 
