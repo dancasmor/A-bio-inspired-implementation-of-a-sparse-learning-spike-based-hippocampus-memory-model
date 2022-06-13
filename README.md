@@ -100,7 +100,16 @@ Finally, in order to be able to use the memory model as a module within a larger
 
 <h2 name="CiteThisWork">Cite this work</h2>
 <p align="justify">
-Sent to a journal and awaiting review.
+<strong>APA</strong>: Casanueva-Morato, D., Ayuso-Martinez, A., Dominguez-Morales, J. P., Jimenez-Fernandez, A., & Jimenez-Moreno, G. (2022). A bio-inspired implementation of a sparse-learning spike-based hippocampus memory model. arXiv preprint arXiv:2206.04924.
+</p>
+<p align="justify">
+<strong>ISO 690</strong>: CASANUEVA-MORATO, Daniel, et al. A bio-inspired implementation of a sparse-learning spike-based hippocampus memory model. arXiv preprint arXiv:2206.04924, 2022.
+</p>
+<p align="justify">
+<strong>MLA</strong>: Casanueva-Morato, Daniel, et al. "A bio-inspired implementation of a sparse-learning spike-based hippocampus memory model." arXiv preprint arXiv:2206.04924 (2022).
+</p>
+<p align="justify">
+<strong>BIBTEX</strong>: @article{casanueva2022a, title={A bio-inspired implementation of a sparse-learning spike-based hippocampus memory model}, author={Casanueva-Morato, Daniel and Ayuso-Martinez, Alvaro and Dominguez-Morales, Juan P and Jimenez-Fernandez, Angel and Jimenez-Moreno, Gabriel}, journal={arXiv preprint arXiv:2206.04924}, year={2022}}
 </p>
 
 
