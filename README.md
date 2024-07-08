@@ -48,11 +48,11 @@ Please go to section <a href="#CiteThisWork">cite this work</a> to learn how to 
 	<li>Python version 3.8.10</li>
 	<li>Python libraries:</li>
 	<ul>
-		<li><strong>sPyNNaker8</strong>: last stable version <a href="http://spinnakermanchester.github.io/development/gitinstall.html">compiled from source</a></li>
+		<li><p align="justify"><strong>sPyNNaker8</strong> or sPyNNaker (changing "import spynnaker8 as sim" to import "pyNN.spiNNaker as sim")</p></li>
 		<li><strong>numpy</strong> 1.21.4</li>
 		<li><strong>matplotlib</strong> 3.5.0</li>
 		<li><strong>xlsxWriter</strong> 3.0.2</li>
-		<li><strong>sPyBlocks</strong>: 0.0.1</li>
+		<li><strong>sPyBlocks</strong> 0.0.1</li>
 	</ul>
 </ol>
 </p>
@@ -97,16 +97,16 @@ Finally, in order to be able to use the memory model as a module within a larger
 
 <h2 name="CiteThisWork">Cite this work</h2>
 <p align="justify">
-<strong>APA</strong>: Casanueva-Morato, D., Ayuso-Martinez, A., Dominguez-Morales, J. P., Jimenez-Fernandez, A., & Jimenez-Moreno, G. (2022). A bio-inspired implementation of a sparse-learning spike-based hippocampus memory model. arXiv preprint arXiv:2206.04924.
+<strong>APA</strong>: Casanueva-Morato, D., Ayuso-Martinez, A., Dominguez-Morales, J. P., Jimenez-Fernandez, A., & Jimenez-Moreno, G. (2024). A bio-inspired implementation of a sparse-learning spike-based hippocampus memory model. IEEE Transactions on Emerging Topics in Computing.
 </p>
 <p align="justify">
-<strong>ISO 690</strong>: CASANUEVA-MORATO, Daniel, et al. A bio-inspired implementation of a sparse-learning spike-based hippocampus memory model. arXiv preprint arXiv:2206.04924, 2022.
+<strong>ISO 690</strong>: CASANUEVA-MORATO, Daniel, et al. A bio-inspired implementation of a sparse-learning spike-based hippocampus memory model. IEEE Transactions on Emerging Topics in Computing, 2024.
 </p>
 <p align="justify">
-<strong>MLA</strong>: Casanueva-Morato, Daniel, et al. "A bio-inspired implementation of a sparse-learning spike-based hippocampus memory model." arXiv preprint arXiv:2206.04924 (2022).
+<strong>MLA</strong>: Casanueva-Morato, Daniel, et al. "A bio-inspired implementation of a sparse-learning spike-based hippocampus memory model." IEEE Transactions on Emerging Topics in Computing (2024).
 </p>
 <p align="justify">
-<strong>BIBTEX</strong>: @article{casanueva2022a, title={A bio-inspired implementation of a sparse-learning spike-based hippocampus memory model}, author={Casanueva-Morato, Daniel and Ayuso-Martinez, Alvaro and Dominguez-Morales, Juan P and Jimenez-Fernandez, Angel and Jimenez-Moreno, Gabriel}, journal={arXiv preprint arXiv:2206.04924}, year={2022}}
+<strong>BIBTEX</strong>: @article{casanueva2024bio, title={A bio-inspired implementation of a sparse-learning spike-based hippocampus memory model}, author={Casanueva-Morato, Daniel and Ayuso-Martinez, Alvaro and Dominguez-Morales, Juan P and Jimenez-Fernandez, Angel and Jimenez-Moreno, Gabriel}, journal={IEEE Transactions on Emerging Topics in Computing}, year={2024}, publisher={IEEE}}
 </p>
 
 
@@ -114,9 +114,9 @@ Finally, in order to be able to use the memory model as a module within a larger
 <p align="justify">
 The author of the original idea is Daniel Casanueva-Morato while working on a research project of the <a href="http://www.rtc.us.es/">RTC Group</a>.
 
-This research was partially supported by the Spanish grant MINDROB (PID2019-105556GB-C33/AEI/10.13039/501100011033). 
+This research was partially supported by grant MINDROB (PID2019-105556GB-C33) and by NASSAI (PDC2023-145841-C33) funded by MICIU/AEI /10.13039/501100011033. 
 
-D. C.-M. was supported by a "Formación de Profesor Universitario" Scholarship from the Spanish Ministry of Education, Culture and Sport.
+D. C.-M. was supported by a “Formación de Profesorado Universitario” Scholarship from the Spanish Ministry of Science, Innovation and Universities.
 </p>
 
 
