@@ -35,7 +35,7 @@ Please go to section <a href="#CiteThisWork">cite this work</a> to learn how to 
 
 <strong>Keywords</strong>: Hippocampus model, spiking neural networks, Neuromorphic engineering, CA3, DG, CA1, SpiNNaker, spike-based memory
 
-<strong>Author</strong>: Gabriel Jiménez Moreno
+<strong>Author</strong>: Daniel Casanueva-Morato and Gabriel Jiménez Moreno
 
 <strong>Contact</strong>: dcasanueva@us.es
 </p>
